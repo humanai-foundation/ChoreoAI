@@ -1,0 +1,12 @@
+.ipynb_checkpoints/
+
+evaluation_test/
+
+pose_extraction/ilya_poses
+pose_extraction/.ipynb_checkpoints
+pose_extraction/3d_pose_extraction/*.json
+pose_extraction/3d_pose_extraction/test/vis/
+
+models/.ipynb_checkpoints/
+models/__pycache__/
+models/data/*.npy
