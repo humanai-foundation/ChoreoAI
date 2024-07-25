@@ -105,7 +105,7 @@ class TransformerDecoder(nn.Module):
         self.decoder_layer = nn.TransformerDecoderLayer(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward)
         self.transformer_decoder = nn.TransformerDecoder(self.decoder_layer, num_layers=num_layers)
         self.fc_out = nn.Linear(d_model, 29 * 3)
-    
+
     def forward(self, tgt, memory):
         # tgt: [29, 3], memory: [29 * 3]
         batch_size, seq_len, num_joints, joint_dim = tgt.shape
@@ -156,7 +156,7 @@ class DancerTransformer(nn.Module):
 
 
 if __name__ == '__main__':
-    model = DancerTransformer(64, 8, 32, 32, 32).to('cuda')
+    model = DancerTransformer(64, 8, 32, 32, 64).to('cuda')
     print(model)
     input_1 = torch.rand(8, 32, 29, 3).to('cuda')
     input_2 = torch.rand(8, 32, 29, 3).to('cuda')

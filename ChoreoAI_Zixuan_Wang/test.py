@@ -5,7 +5,7 @@ import random
 
 from data.dataset import DancerDataset
 from model.model_pipeline import Pipeline
-from model.transformer import DanceTransformer
+from model.transformer import DancerTransformer
 
 def preprocess_dataset(dancer_np):
     dancer1_np = dancer_np[::2, :, :]
@@ -33,50 +33,65 @@ def test():
     # dataset_names = ['pose_extraction_img_9085.npy', 'pose_extraction_ilya_hannah_dyads.npy', 'pose_extraction_hannah_cassie.npy', 'pose_extraction_dyads_rehearsal_leah.npy']
     
     test_dataset = create_test_dataset('pose_extraction_img_9085.npy')
-    test_dict_data = test_dataset[random.randint(0, len(test_dataset) - 1)]
+    print(len(test_dataset))
+    test_dict_data = test_dataset[1000]
+    test_dict_data_next_timestamap = test_dataset[1001]
 
     # [seq_len, 29, 3]
     dancer1_data = test_dict_data['dancer1'].to(device)
     dancer2_data = test_dict_data['dancer2'].to(device)
 
+    print(dancer1_data.shape)
+
+    dancer1_data_next_timestamp = test_dict_data_next_timestamap['dancer1'].to(device)
+    dancer2_data_next_timestamp = test_dict_data_next_timestamap['dancer2'].to(device)
+
+    print(dancer1_data_next_timestamp.shape)
+
+    dancer1_data_all = torch.cat((dancer1_data, dancer1_data_next_timestamp), dim=0)
+    dancer2_data_all = torch.cat((dancer2_data, dancer2_data_next_timestamp), dim=0)
+
+    print(dancer1_data_all.shape)
+
     model = Pipeline()
-    net = DanceTransformer(16, 16, 16, 16, 8, 4, 64).to(device)
+    net = DancerTransformer(64, 8, 32, 32, 64).to(device)
     model.load_network(net, "result/best_model.pth")
 
     # test
-    dancer1_data = torch.tensor(dancer1_data[None, :], dtype=torch.float32)
-    dancer2_data = torch.tensor(dancer2_data[None, :], dtype=torch.float32)
+    d1 = torch.tensor(dancer1_data_all[None, :], dtype=torch.float32)
+    d2 = torch.tensor(dancer2_data[None, :], dtype=torch.float32)
 
     with torch.no_grad():
-        linear_1, multihead_attention_1, spatial_temporal_module, fc_1 = net.linear_1, net.multihead_attention_1, net.spatial_temporal_module, net.fc_1
-        decoder_2 = net.decoder_2
-        
-        seq1_fea = linear_1(dancer1_data.view(1, 64, -1))
-        seq1_fea, _ = multihead_attention_1(seq1_fea, seq1_fea, seq1_fea)
-        seq1_fea, hidden_1 = spatial_temporal_module(seq1_fea)
-        aux_seq_1 = fc_1(seq1_fea)
-        aux_seq_1 = aux_seq_1.view(1, 64, 29, 3)
+        vae_1, vae_2, vae_duet, transformer_decoder_1, transformer_decoder_2 = net.vae_1, net.vae_2, net.vae_duet, net.transformer_decoder_1, net.transformer_decoder_2
 
-        aux_seq_2 = torch.zeros(1, 64, 29, 3, dtype=torch.float32).to(device)
-
-        # full
-        latent_space_2 = torch.tensor(np.random.normal(0, 0.1, (1, 16)), dtype=torch.float32).to(device)
-        pred_2_full = decoder_2(latent_space_2, aux_seq_1 + aux_seq_2)
-
-        print(pred_2_full.shape)
-
-        # incremental
-        pred_2_incremental = torch.zeros(1, 64, 29, 3, dtype=torch.float32).to(device)
-        # auto-regressive
         for i in range(64):
-            # every time only generate 1 frame
             # [1, 64, 29, 3]
-            tmp = decoder_2(latent_space_2, aux_seq_1 + pred_2_incremental)
-            pred_2_incremental[:, i, :, :] = tmp[:, i, :, :]
+            combined = torch.stack((d1[:, i: i + 64, :, :], d2[:, i: i + 64, :, :]), dim=-1)
+            mean = combined.mean(dim=(2, 3, 4), keepdim=True)
+            std = combined.std(dim=(2, 3, 4), keepdim=True)
+            combined_normalized = (combined - mean) / (std + 1e-6)
 
-        np.save("seq1.npy", dancer1_data.squeeze(0).detach().cpu().numpy())
-        np.save("seq2_full.npy", pred_2_full.squeeze(0).detach().cpu().numpy())
-        np.save("seq2_incremental.npy", pred_2_incremental.squeeze(0).detach().cpu().numpy())
+            d1_normalized = combined_normalized[..., 0]
+            d2_normalized = combined_normalized[..., 1]
+
+            out_1, mean_1, log_var_1 = vae_1(d1_normalized)
+            out_2, mean_2, log_var_2 = vae_2(d2_normalized)
+            out_duet, mean_duet, log_var_duet = vae_duet(d1_normalized, d2_normalized)
+
+            # [batch_size, seq_len, 29 * 3]
+            memory_1 = out_1 + out_duet
+            memory_2 = out_2 + out_duet
+
+            # transformer decoder [1, 64, 29, 3]
+            pred_2 = transformer_decoder_1(d2_normalized, memory_1)
+
+            last_dim = pred_2[:, -1, :, :].unsqueeze(1)
+            d2 = torch.cat((d2, last_dim), dim=1)
+
+        np.save("seq1_original.npy", dancer1_data_all.detach().cpu().numpy())
+        np.save("seq2_original.npy", dancer2_data_all.detach().cpu().numpy())
+        np.save("seq2_next_ts.npy", d2.squeeze(0).detach().cpu().numpy())
+
 
 if __name__ == '__main__':
     test()

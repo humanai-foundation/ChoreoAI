@@ -33,7 +33,7 @@ def create_dataset_loader(dataset_dir):
     train_dataset = Subset(dataset, range(train_size))
     test_dataset = Subset(dataset, range(train_size, len(dataset)))
 
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
     return train_loader, test_loader
 
@@ -65,6 +65,7 @@ def main():
     for epoch in range(epochs):
         logger.info(f"Epoch: {epoch}")
         for train_loader in train_loaders:
+            logger.info(f"train loader size: {len(train_loader)}")
             for train_data in train_loader:
                 model.feed_data(train_data)
                 cur_loss = model.optimize_parameters()

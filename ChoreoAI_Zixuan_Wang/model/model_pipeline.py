@@ -3,7 +3,7 @@ import os
 import logging
 from copy import deepcopy
 
-from model.transformer import DanceTransformer
+from model.transformer import DancerTransformer
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 from loss.reconstruction_loss import ReconstructionLoss
 
@@ -13,7 +13,7 @@ logger = logging.getLogger('ai_choreo')
 class Pipeline:
     def __init__(self):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.network = DanceTransformer(16, 16, 16, 16, 8, 4, 64, 64).to(self.device)
+        self.network = DancerTransformer(64, 8, 32, 32, 64).to(self.device)
         self.loss = 0
         self.criterion = ReconstructionLoss()
 
@@ -41,7 +41,7 @@ class Pipeline:
         self.dancer1_next_timestamp = torch.tensor(data['dancer1_next_timestamp'], dtype=torch.float32).to(self.device)
         self.dancer2_next_timestamp = torch.tensor(data['dancer2_next_timestamp'], dtype=torch.float32).to(self.device)
 
-    def compute_loss(self, pred_data_1, pred_data_2):
+    def compute_loss(self, pred_data_1, pred_data_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet):
         return self.criterion(pred_data_1, pred_data_2, self.dancer1_next_timestamp, self.dancer2_next_timestamp, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
 
     def optimize_parameters(self):
@@ -100,8 +100,8 @@ class Pipeline:
         with torch.no_grad():
             for test_data in test_loader:
                 self.feed_data(test_data)
-                pred_data1, pred_data2 = self.network(self.dancer1_data, self.dancer2_data)
-                cur_loss += self.compute_loss(pred_data1, pred_data2)
+                pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet = self.network(self.dancer1_data, self.dancer2_data)
+                cur_loss += self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
 
             cur_loss /= len(test_loader)
         self.network.train()
