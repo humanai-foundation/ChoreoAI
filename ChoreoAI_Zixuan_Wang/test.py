@@ -34,8 +34,8 @@ def test():
     
     test_dataset = create_test_dataset('pose_extraction_img_9085.npy')
     print(len(test_dataset))
-    test_dict_data = test_dataset[1000]
-    test_dict_data_next_timestamap = test_dataset[1001]
+    test_dict_data = test_dataset[500]
+    test_dict_data_next_timestamap = test_dataset[564]
 
     # [seq_len, 29, 3]
     dancer1_data = test_dict_data['dancer1'].to(device)
@@ -46,12 +46,10 @@ def test():
     dancer1_data_next_timestamp = test_dict_data_next_timestamap['dancer1'].to(device)
     dancer2_data_next_timestamp = test_dict_data_next_timestamap['dancer2'].to(device)
 
-    print(dancer1_data_next_timestamp.shape)
-
     dancer1_data_all = torch.cat((dancer1_data, dancer1_data_next_timestamp), dim=0)
     dancer2_data_all = torch.cat((dancer2_data, dancer2_data_next_timestamp), dim=0)
 
-    print(dancer1_data_all.shape)
+    print(dancer2_data_all.shape)
 
     model = Pipeline()
     net = DancerTransformer(64, 8, 32, 32, 64).to(device)
