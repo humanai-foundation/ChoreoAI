@@ -68,6 +68,7 @@ def main():
 
     for epoch in range(epochs):
         logger.info(f"Epoch: {epoch}")
+        
         for train_loader in train_loaders:
             logger.info(f"train loader size: {len(train_loader)}")
             for train_data in train_loader:

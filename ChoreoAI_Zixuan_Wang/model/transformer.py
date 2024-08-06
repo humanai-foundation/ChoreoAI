@@ -8,6 +8,7 @@ class VAEForSingleDancerEncoder(nn.Module):
     def __init__(self, linear_num_features, n_head, latent_dim):
         super(VAEForSingleDancerEncoder, self).__init__()
         self.linear = nn.Linear(29 * 3, linear_num_features)
+        self.pos_encoding = PositionalEncoding(linear_num_features)
         self.multihead_attention = nn.MultiheadAttention(embed_dim=linear_num_features, num_heads=n_head, batch_first=True)
         self.lstm = nn.LSTM(input_size=linear_num_features, hidden_size=linear_num_features, num_layers=2, batch_first=True)
         self.mean = nn.Linear(in_features=linear_num_features, out_features=latent_dim)
@@ -15,7 +16,7 @@ class VAEForSingleDancerEncoder(nn.Module):
 
     def forward(self, x):
         x = x.reshape(x.shape[0], x.shape[1], -1)
-        x = self.linear(x)
+        x = self.pos_encoding(self.linear(x))
         attn_output, _ = self.multihead_attention(x, x, x)
         _, (hidden, _) = self.lstm(attn_output)
         z_mean = self.mean(hidden[-1])
@@ -98,7 +99,7 @@ class PositionalEncoding(nn.Module):
 
 
 class TransformerDecoder(nn.Module):
-    def __init__(self, d_model=64, nhead=8, num_layers=2, dim_feedforward=256):
+    def __init__(self, d_model, nhead=8, num_layers=2, dim_feedforward=256):
         super(TransformerDecoder, self).__init__()
         self.linear = nn.Linear(29 * 3, d_model)
         self.pos_encoder = PositionalEncoding(d_model)
@@ -127,8 +128,8 @@ class DancerTransformer(nn.Module):
         self.vae_1 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len)
         self.vae_2 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len)
         self.vae_duet = VAEForDuet(linear_num_features, n_head, latent_dim, n_units, seq_len)
-        self.transformer_decoder_1 = TransformerDecoder()
-        self.transformer_decoder_2 = TransformerDecoder()
+        self.transformer_decoder_1 = TransformerDecoder(linear_num_features)
+        self.transformer_decoder_2 = TransformerDecoder(linear_num_features)
     
     def forward(self, d1, d2):
         # normalize data
@@ -158,8 +159,8 @@ class DancerTransformer(nn.Module):
 if __name__ == '__main__':
     model = DancerTransformer(64, 8, 32, 32, 64).to('cuda')
     print(model)
-    input_1 = torch.rand(8, 32, 29, 3).to('cuda')
-    input_2 = torch.rand(8, 32, 29, 3).to('cuda')
+    input_1 = torch.rand(8, 64, 29, 3).to('cuda')
+    input_2 = torch.rand(8, 64, 29, 3).to('cuda')
 
-    out_1, out_2 = model(input_1, input_2)
+    out_1, out_2, _, _, _, _, _, _ = model(input_1, input_2)
     print(out_1.shape)
