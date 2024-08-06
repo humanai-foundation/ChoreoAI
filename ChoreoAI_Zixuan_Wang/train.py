@@ -53,12 +53,15 @@ def main():
     train_losses = []
     validation_losses = []
 
+    train_data_length = 0
+
     for name in dataset_names:
         train_loader, validation_loader = create_dataset_loader(name)
         train_loaders.append(train_loader)
+        train_data_length += len(train_loader)
         validation_loaders.append(validation_loader)
 
-    epochs = 100
+    epochs = 1
 
     logger.info("Started training.")
 
@@ -68,16 +71,18 @@ def main():
 
     for epoch in range(epochs):
         logger.info(f"Epoch: {epoch}")
-        
+        train_loss = 0
+
         for train_loader in train_loaders:
             logger.info(f"train loader size: {len(train_loader)}")
             for train_data in train_loader:
                 model.feed_data(train_data)
                 cur_loss = model.optimize_parameters()
-                train_losses.append(cur_loss.item())
+                train_loss += cur_loss.item()
                 logger.info(f"training loss: {cur_loss}")
-
+            
         model.update_learning_rate()
+        train_losses.append(train_loss / train_data_length)
 
         validation_loss = 0
 
