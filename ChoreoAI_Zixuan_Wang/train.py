@@ -28,14 +28,15 @@ def create_dataset_loader(dataset_dir):
     dancer1_np, dancer2_np = preprocess_dataset(dancer_np)
     dataset = DancerDataset(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
 
-    train_size = int(0.9 * len(dataset))
+    train_size = int(0.7 * len(dataset))
+    validation_size = int(0.2 * len(dataset))
 
     train_dataset = Subset(dataset, range(train_size))
-    test_dataset = Subset(dataset, range(train_size, len(dataset)))
+    validation_dataset = Subset(dataset, range(train_size, train_size + validation_size))
 
     train_loader = DataLoader(train_dataset, batch_size=16, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
-    return train_loader, test_loader
+    validation_loader = DataLoader(validation_dataset, batch_size=1, shuffle=False)
+    return train_loader, validation_loader
 
 
 def main():
@@ -47,12 +48,15 @@ def main():
     dataset_names = ['pose_extraction_img_9085.npy', 'pose_extraction_ilya_hannah_dyads.npy', 'pose_extraction_hannah_cassie.npy', 'pose_extraction_dyads_rehearsal_leah.npy']
 
     train_loaders = []
-    test_loaders = []
+    validation_loaders = []
+    
+    train_losses = []
+    validation_losses = []
 
     for name in dataset_names:
-        train_loader, test_loader = create_dataset_loader(name)
+        train_loader, validation_loader = create_dataset_loader(name)
         train_loaders.append(train_loader)
-        test_loaders.append(test_loader)
+        validation_loaders.append(validation_loader)
 
     epochs = 100
 
@@ -60,7 +64,7 @@ def main():
 
     model = Pipeline()
 
-    prev_best_test_loss = -1
+    prev_best_validation_loss = -1
 
     for epoch in range(epochs):
         logger.info(f"Epoch: {epoch}")
@@ -69,20 +73,25 @@ def main():
             for train_data in train_loader:
                 model.feed_data(train_data)
                 cur_loss = model.optimize_parameters()
+                train_losses.append(cur_loss.item())
                 logger.info(f"training loss: {cur_loss}")
 
         model.update_learning_rate()
 
-        test_loss = 0
+        validation_loss = 0
 
-        for test_loader in test_loaders:
-            test_loss += model.test(test_loader)
+        for validation_loader in validation_loaders:
+            validation_loss += model.test(validation_loader)
         
-        test_loss /= len(test_loaders)
+        validation_loss /= len(validation_loaders)
+        validation_losses.append(validation_loss.item())
 
-        if prev_best_test_loss == -1 or test_loss < prev_best_test_loss:
-            test_loss = prev_best_test_loss
+        if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
+            prev_best_validation_loss = validation_loss
             model.save_network()
+    
+    np.save("train_loss_" + get_time_str() + ".npy", np.array(train_losses))
+    np.save("validation_loss_" + get_time_str() + ".npy", np.array(validation_losses))
 
 
 if __name__ == '__main__':
