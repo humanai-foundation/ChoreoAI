@@ -6,7 +6,7 @@ from torch.utils.data import Subset, DataLoader
 
 from utils.logger import get_root_logger
 from utils.misc import get_time_str
-from data.dataset import DancerDataset
+from data.dataset_original import DancerDatasetOriginal
 from model.model_pipeline import Pipeline
 
 def init_logger():
@@ -26,7 +26,7 @@ def preprocess_dataset(dancer_np):
 def create_dataset_loader(dataset_dir):
     dancer_np = np.load('dataset/' + dataset_dir)
     dancer1_np, dancer2_np = preprocess_dataset(dancer_np)
-    dataset = DancerDataset(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
+    dataset = DancerDatasetOriginal(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
 
     train_size = int(0.7 * len(dataset))
     validation_size = int(0.2 * len(dataset))
@@ -61,7 +61,7 @@ def main():
         train_data_length += len(train_loader)
         validation_loaders.append(validation_loader)
 
-    epochs = 1
+    epochs = 20
 
     logger.info("Started training.")
 
@@ -79,10 +79,11 @@ def main():
                 model.feed_data(train_data)
                 cur_loss = model.optimize_parameters()
                 train_loss += cur_loss.item()
-                logger.info(f"training loss: {cur_loss}")
+                logger.info(f"one train data training loss: {cur_loss}")
             
         model.update_learning_rate()
         train_losses.append(train_loss / train_data_length)
+        logger.info(f"total training loss: {train_loss / train_data_length}")
 
         validation_loss = 0
 
@@ -90,14 +91,15 @@ def main():
             validation_loss += model.test(validation_loader)
         
         validation_loss /= len(validation_loaders)
+        logger.info(f"validation loss: {validation_loss}")
         validation_losses.append(validation_loss.item())
 
         if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
             prev_best_validation_loss = validation_loss
             model.save_network()
     
-    np.save("train_loss_" + get_time_str() + ".npy", np.array(train_losses))
-    np.save("validation_loss_" + get_time_str() + ".npy", np.array(validation_losses))
+    np.save("train_loss.npy", np.array(train_losses))
+    np.save("validation_loss.npy", np.array(validation_losses))
 
 
 if __name__ == '__main__':

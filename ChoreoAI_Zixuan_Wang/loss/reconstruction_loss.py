@@ -24,7 +24,7 @@ class ReconstructionLoss(nn.Module):
         total_variation_loss = torch.sum(torch.abs(out_1[:, 1:] - out_1[:, :-1])) + torch.sum(torch.abs(out_2[:, 1:] - out_2[:, :-1]))
 
         # KL divergence loss
-        return 0.5 * mse_1 + 0.5 * mse_2 + 0.1 * velocity_loss_1 + 0.1 * velocity_loss_2 + 0.01 * total_variation_loss + 0.0001 * (
+        return 0.5 * mse_1 + 0.5 * mse_2 + 0.1 * velocity_loss_1 + 0.1 * velocity_loss_2 + 0.0001 * total_variation_loss + 0.0001 * (
             - 0.5 * torch.mean(torch.sum(1 + log_var_1 - mean_1 ** 2 - torch.exp(log_var_1), dim=-1), dim=0)
             - 0.5 * torch.mean(torch.sum(1 + log_var_2 - mean_2 ** 2 - torch.exp(log_var_2), dim=-1), dim=0)
             - 0.5 * torch.mean(torch.sum(1 + log_var_duet - mean_duet ** 2 - torch.exp(log_var_duet), dim=-1), dim=0)

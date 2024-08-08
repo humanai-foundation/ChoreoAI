@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Subset, DataLoader
 import random
 
-from data.dataset import DancerDataset
+from data.dataset_original import DancerDatasetOriginal
 from model.model_pipeline import Pipeline
 from model.transformer import DancerTransformer
 
@@ -16,7 +16,7 @@ def preprocess_dataset(dancer_np):
 def create_test_dataset(dataset_dir):
     dancer_np = np.load('dataset/' + dataset_dir)
     dancer1_np, dancer2_np = preprocess_dataset(dancer_np)
-    dataset = DancerDataset(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
+    dataset = DancerDatasetOriginal(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
 
     train_size = int(0.9 * len(dataset))
     test_dataset = Subset(dataset, range(train_size, len(dataset)))
@@ -34,8 +34,8 @@ def test():
     
     test_dataset = create_test_dataset('pose_extraction_img_9085.npy')
     print(len(test_dataset))
-    test_dict_data = test_dataset[500]
-    test_dict_data_next_timestamap = test_dataset[564]
+    test_dict_data = test_dataset[1000]
+    test_dict_data_next_timestamap = test_dataset[1064]
 
     # [seq_len, 29, 3]
     dancer1_data = test_dict_data['dancer1'].to(device)
@@ -86,9 +86,9 @@ def test():
             last_dim = pred_2[:, -1, :, :].unsqueeze(1)
             d2 = torch.cat((d2, last_dim), dim=1)
 
-        np.save("seq1_original.npy", dancer1_data_all.detach().cpu().numpy())
-        np.save("seq2_original.npy", dancer2_data_all.detach().cpu().numpy())
-        np.save("seq2_next_ts.npy", d2.squeeze(0).detach().cpu().numpy())
+        np.save("seq1_original_2.npy", dancer1_data_all.detach().cpu().numpy())
+        np.save("seq2_original_2.npy", dancer2_data_all.detach().cpu().numpy())
+        np.save("seq2_next_ts_2.npy", d2.squeeze(0).detach().cpu().numpy())
 
 
 if __name__ == '__main__':

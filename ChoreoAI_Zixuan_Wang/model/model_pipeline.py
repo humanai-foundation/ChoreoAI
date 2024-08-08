@@ -4,6 +4,7 @@ import logging
 from copy import deepcopy
 
 from model.transformer import DancerTransformer
+# from model.transformer_prob import DancerTransformerWithNoInputProb
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 from loss.reconstruction_loss import ReconstructionLoss
 
