@@ -61,7 +61,7 @@ def main():
         train_data_length += len(train_loader)
         validation_loaders.append(validation_loader)
 
-    epochs = 20
+    epochs = 100
 
     logger.info("Started training.")
 

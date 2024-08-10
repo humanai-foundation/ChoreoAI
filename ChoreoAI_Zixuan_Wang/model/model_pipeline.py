@@ -34,7 +34,7 @@ class Pipeline:
         self.optimizer = torch.optim.Adam(optim_params)
 
     def setup_schedulers(self):
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[10, 20, 30, 40, 50, 60, 70, 80, 90])
+        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[20, 40, 60, 80])
 
     def feed_data(self, data):
         self.dancer1_data = torch.tensor(data['dancer1'], dtype=torch.float32).to(self.device)
