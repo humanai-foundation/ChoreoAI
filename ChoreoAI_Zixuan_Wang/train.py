@@ -3,6 +3,7 @@ from os import path as osp
 import logging
 import numpy as np
 from torch.utils.data import Subset, DataLoader
+import wandb
 
 from utils.logger import get_root_logger
 from utils.misc import get_time_str
@@ -49,11 +50,10 @@ def main():
 
     train_loaders = []
     validation_loaders = []
-    
-    train_losses = []
-    validation_losses = []
 
     train_data_length = 0
+
+    wandb.init(project='duet')
 
     for name in dataset_names:
         train_loader, validation_loader = create_dataset_loader(name)
@@ -82,7 +82,7 @@ def main():
                 logger.info(f"one train data training loss: {cur_loss}")
             
         model.update_learning_rate()
-        train_losses.append(train_loss / train_data_length)
+        wandb.log({'train/loss': train_loss / train_data_length})
         logger.info(f"total training loss: {train_loss / train_data_length}")
 
         validation_loss = 0
@@ -92,14 +92,11 @@ def main():
         
         validation_loss /= len(validation_loaders)
         logger.info(f"validation loss: {validation_loss}")
-        validation_losses.append(validation_loss.item())
+        wandb.log({'validation/loss': validation_loss.item()})
 
         if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
             prev_best_validation_loss = validation_loss
-            model.save_network()
-    
-    np.save("train_loss.npy", np.array(train_losses))
-    np.save("validation_loss.npy", np.array(validation_losses))
+            model.save_netwaork()
 
 
 if __name__ == '__main__':

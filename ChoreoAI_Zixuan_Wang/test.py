@@ -30,12 +30,15 @@ def test():
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    seq_length = 64
+    test_set_idx = 1000
+
     # dataset_names = ['pose_extraction_img_9085.npy', 'pose_extraction_ilya_hannah_dyads.npy', 'pose_extraction_hannah_cassie.npy', 'pose_extraction_dyads_rehearsal_leah.npy']
     
     test_dataset = create_test_dataset('pose_extraction_img_9085.npy')
     print(len(test_dataset))
-    test_dict_data = test_dataset[1000]
-    test_dict_data_next_timestamap = test_dataset[1064]
+    test_dict_data = test_dataset[test_set_idx]
+    test_dict_data_next_timestamap = test_dataset[test_set_idx + seq_length]
 
     # [seq_len, 29, 3]
     dancer1_data = test_dict_data['dancer1'].to(device)
@@ -46,6 +49,7 @@ def test():
     dancer1_data_next_timestamp = test_dict_data_next_timestamap['dancer1'].to(device)
     dancer2_data_next_timestamp = test_dict_data_next_timestamap['dancer2'].to(device)
 
+    # 128 frames
     dancer1_data_all = torch.cat((dancer1_data, dancer1_data_next_timestamp), dim=0)
     dancer2_data_all = torch.cat((dancer2_data, dancer2_data_next_timestamp), dim=0)
 
@@ -53,10 +57,12 @@ def test():
 
     model = Pipeline()
     net = DancerTransformer(64, 8, 32, 32, 64).to(device)
-    model.load_network(net, "result/best_model.pth")
+    model.load_network(net, "result/best_model_0811.pth")
 
     # test
+    # 128 frames
     d1 = torch.tensor(dancer1_data_all[None, :], dtype=torch.float32)
+    # 64 frames
     d2 = torch.tensor(dancer2_data[None, :], dtype=torch.float32)
 
     with torch.no_grad():
@@ -64,7 +70,7 @@ def test():
 
         for i in range(64):
             # [1, 64, 29, 3]
-            combined = torch.stack((d1[:, i: i + 64, :, :], d2[:, i: i + 64, :, :]), dim=-1)
+            combined = torch.stack((d1[:, i: i + seq_length, :, :], d2[:, i: i + seq_length, :, :]), dim=-1)
             mean = combined.mean(dim=(2, 3, 4), keepdim=True)
             std = combined.std(dim=(2, 3, 4), keepdim=True)
             combined_normalized = (combined - mean) / (std + 1e-6)
@@ -86,9 +92,9 @@ def test():
             last_dim = pred_2[:, -1, :, :].unsqueeze(1)
             d2 = torch.cat((d2, last_dim), dim=1)
 
-        np.save("seq1_original_2.npy", dancer1_data_all.detach().cpu().numpy())
-        np.save("seq2_original_2.npy", dancer2_data_all.detach().cpu().numpy())
-        np.save("seq2_next_ts_2.npy", d2.squeeze(0).detach().cpu().numpy())
+        np.save("seq1_original_3.npy", dancer1_data_all.detach().cpu().numpy())
+        np.save("seq2_original_3.npy", dancer2_data_all.detach().cpu().numpy())
+        np.save("seq2_next_ts_3.npy", d2.squeeze(0).detach().cpu().numpy())
 
 
 if __name__ == '__main__':
