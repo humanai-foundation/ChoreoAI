@@ -80,7 +80,7 @@ def main():
                 cur_loss = model.optimize_parameters()
                 train_loss += cur_loss.item()
                 logger.info(f"one train data training loss: {cur_loss}")
-            
+
         model.update_learning_rate()
         wandb.log({'train/loss': train_loss / train_data_length})
         logger.info(f"total training loss: {train_loss / train_data_length}")
@@ -96,7 +96,7 @@ def main():
 
         if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
             prev_best_validation_loss = validation_loss
-            model.save_netwaork()
+            model.save_network()
 
 
 if __name__ == '__main__':

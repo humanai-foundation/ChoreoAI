@@ -13,6 +13,7 @@ class ReconstructionLoss(nn.Module):
         mse_2 = self.mse_loss(out_2, target_2)
 
         # video continuity loss
+        # [batch, seq_len, 29, 3]
         velocity_1 = out_1[:, 1:, :, :] - out_1[:, :-1, :, :]
         velocity_1_diff = velocity_1[:, 1:, :, :] - velocity_1[:, :-1, :, :]
         velocity_loss_1 = torch.mean(torch.norm(velocity_1_diff, p=2, dim=[2, 3]))

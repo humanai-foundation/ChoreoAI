@@ -12,18 +12,18 @@ logger = logging.getLogger('ai_choreo')
 
 
 class Pipeline:
-    def __init__(self):
+    def __init__(self, epochs=100):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.network = DancerTransformer(64, 8, 32, 32, 64).to(self.device)
         self.loss = 0
         self.criterion = ReconstructionLoss()
 
-        self.init_training_settings()
+        self.init_training_settings(epochs)
 
-    def init_training_settings(self):
+    def init_training_settings(self, epochs):
         self.network.train()
         self.setup_optimizers()
-        self.setup_schedulers()
+        self.setup_schedulers(epochs)
 
     def setup_optimizers(self):
         optim_params = []
@@ -33,8 +33,8 @@ class Pipeline:
 
         self.optimizer = torch.optim.Adam(optim_params)
 
-    def setup_schedulers(self):
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[20, 40, 60, 80])
+    def setup_schedulers(self, epochs):
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, epochs)
 
     def feed_data(self, data):
         self.dancer1_data = torch.tensor(data['dancer1'], dtype=torch.float32).to(self.device)
