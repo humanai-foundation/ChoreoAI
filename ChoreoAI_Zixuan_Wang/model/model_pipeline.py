@@ -4,19 +4,29 @@ import logging
 from copy import deepcopy
 
 from model.transformer import DancerTransformer
-# from model.transformer_prob import DancerTransformerWithNoInputProb
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 from loss.reconstruction_loss import ReconstructionLoss
+from utils.misc import get_time_str
 
 logger = logging.getLogger('ai_choreo')
 
 
 class Pipeline:
-    def __init__(self, epochs=100):
+    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight=0.5, epochs=100):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.network = DancerTransformer(64, 8, 32, 32, 64).to(self.device)
+        self.linear_num_features = linear_num_features
+        self.n_head = n_head
+        self.latent_dim = latent_dim
+        self.n_units = n_units
+        self.seq_len = seq_len
+        self.no_input_prob = no_input_prob
+        self.velocity_loss_weight = velocity_loss_weight
+        self.kl_loss_weight = kl_loss_weight
+        self.mse_loss_weight = mse_loss_weight
+        self.epochs = epochs
+        self.network = DancerTransformer(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob).to(self.device)
         self.loss = 0
-        self.criterion = ReconstructionLoss()
+        self.criterion = ReconstructionLoss(self.velocity_loss_weight, self.kl_loss_weight, self.mse_loss_weight)
 
         self.init_training_settings(epochs)
 
@@ -75,7 +85,7 @@ class Pipeline:
         self.scheduler.step()
 
     def save_network(self, param_key='params'):
-        save_filename = "best_model.pth"
+        save_filename = "best_model_" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + ".pth"
         save_path = os.path.join("result", save_filename)
 
         param_key = param_key if isinstance(param_key, list) else [param_key]

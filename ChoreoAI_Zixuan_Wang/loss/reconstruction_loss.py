@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 
 class ReconstructionLoss(nn.Module):
-    def __init__(self):
+    def __init__(self, velocity_loss_weight, kl_loss_weight, mse_loss_weight=0.5):
         super(ReconstructionLoss, self).__init__()
         self.mse_loss = nn.MSELoss()
-
+        self.velocity_loss_weight = velocity_loss_weight
+        self.kl_loss_weight = kl_loss_weight
+        self.mse_loss_weight = mse_loss_weight
     
     def forward(self, out_1, out_2, target_1, target_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet):
         # out_1: predict dancer 2, out_2: predict dancer 1
@@ -23,7 +25,7 @@ class ReconstructionLoss(nn.Module):
         velocity_loss_2 = torch.mean(torch.norm(velocity_2_diff, p=2, dim=[2, 3]))
 
         # KL divergence loss
-        return 0.5 * mse_1 + 0.5 * mse_2 + 0.1 * velocity_loss_1 + 0.1 * velocity_loss_2 + 0.0001 * (
+        return self.mse_loss_weight * mse_1 + self.mse_loss_weight * mse_2 + self.velocity_loss_weight * velocity_loss_1 + self.velocity_loss_weight * velocity_loss_2 + self.kl_loss_weight * (
             - 0.5 * torch.mean(torch.sum(1 + log_var_1 - mean_1 ** 2 - torch.exp(log_var_1), dim=-1), dim=0)
             - 0.5 * torch.mean(torch.sum(1 + log_var_2 - mean_2 ** 2 - torch.exp(log_var_2), dim=-1), dim=0)
             - 0.5 * torch.mean(torch.sum(1 + log_var_duet - mean_duet ** 2 - torch.exp(log_var_duet), dim=-1), dim=0)

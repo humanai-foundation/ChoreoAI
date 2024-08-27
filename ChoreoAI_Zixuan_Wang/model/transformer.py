@@ -43,19 +43,27 @@ class VAEForSingleDancerDecoder(nn.Module):
 
 
 class VAEForSingleDancer(nn.Module):
-    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, device='cuda'):
+    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var, device='cuda'):
         super(VAEForSingleDancer, self).__init__()
         self.encoder = VAEForSingleDancerEncoder(linear_num_features, n_head, latent_dim)
         self.decoder = VAEForSingleDancerDecoder(latent_dim, n_units, seq_len)
         self.device = device
+        self.latent_dim = latent_dim
+        self.default_log_var = default_log_var
 
     def sample_z(self, mean, log_var):
         batch, dim = mean.shape
         epsilon = torch.randn(batch, dim).to(self.device)
         return mean + torch.exp(0.5 * log_var) * epsilon
     
-    def forward(self, x):
-        mean, log_var = self.encoder(x)
+    def forward(self, x, no_input=False):
+        batch = x.size()[0]
+        if no_input:
+            mean, log_var = torch.zeros(batch, self.latent_dim), torch.ones(batch, self.latent_dim) * self.default_log_var
+            mean = mean.to(self.device)
+            log_var = log_var.to(self.device)
+        else:
+            mean, log_var = self.encoder(x)
         z = self.sample_z(mean, log_var)
         x = self.decoder(z)
         return x, mean, log_var
@@ -123,15 +131,18 @@ class TransformerDecoder(nn.Module):
 
 
 class DancerTransformer(nn.Module):
-    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len):
+    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, default_log_var=0.5):
         super(DancerTransformer, self).__init__()
-        self.vae_1 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len)
-        self.vae_2 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len)
+        self.vae_1 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var)
+        self.vae_2 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var)
         self.vae_duet = VAEForDuet(linear_num_features, n_head, latent_dim, n_units, seq_len)
         self.transformer_decoder_1 = TransformerDecoder(linear_num_features)
         self.transformer_decoder_2 = TransformerDecoder(linear_num_features)
+        self.no_input_prob = no_input_prob
     
     def forward(self, d1, d2):
+        rdm_val = torch.randn(1)
+
         # normalize data
         combined = torch.stack((d1, d2), dim=-1)
         mean = combined.mean(dim=(2, 3, 4), keepdim=True)
@@ -141,17 +152,36 @@ class DancerTransformer(nn.Module):
         d1_normalized = combined_normalized[..., 0]
         d2_normalized = combined_normalized[..., 1]
 
-        out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)
-        out_2, mean_2, log_var_2 = self.vae_2(d2_normalized)
-        out_duet, mean_duet, log_var_duet = self.vae_duet(d1_normalized, d2_normalized)
+        if rdm_val < self.no_input_prob:
+            # no d1, d2 input
+            out_1, mean_1, log_var_1 = self.vae_1(torch.zeros_like(d1_normalized), no_input=True)
+            out_2, mean_2, log_var_2 = self.vae_2(torch.zeros_like(d2_normalized), no_input=True)
+            out_duet, mean_duet, log_var_duet = self.vae_duet(out_1, out_2)
 
-        # [batch_size, seq_len, 29 * 3]
-        memory_1 = out_1 + out_duet
-        memory_2 = out_2 + out_duet
+            # [batch_size, seq_len, 29 * 3]
+            memory_1 = out_1 + out_duet
+            memory_2 = out_2 + out_duet
 
-        # transformer decoder
-        pred_2 = self.transformer_decoder_1(d2_normalized, memory_1)
-        pred_1 = self.transformer_decoder_2(d1_normalized, memory_2)
+            batch_size, seq_len, _ = memory_1.shape
+            out_1 = out_1.view(batch_size, seq_len, 29, 3)
+            out_2 = out_2.view(batch_size, seq_len, 29, 3)
+
+            # transformer decoder
+            pred_2 = self.transformer_decoder_1(out_2, memory_1)
+            pred_1 = self.transformer_decoder_2(out_1, memory_2)
+
+        else:
+            out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)
+            out_2, mean_2, log_var_2 = self.vae_2(d2_normalized)
+            out_duet, mean_duet, log_var_duet = self.vae_duet(d1_normalized, d2_normalized)
+
+            # [batch_size, seq_len, 29 * 3]
+            memory_1 = out_1 + out_duet
+            memory_2 = out_2 + out_duet
+
+            # transformer decoder
+            pred_2 = self.transformer_decoder_1(d2_normalized, memory_1)
+            pred_1 = self.transformer_decoder_2(d1_normalized, memory_2)
 
         return pred_1, pred_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet
 

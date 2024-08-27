@@ -10,6 +10,9 @@ from utils.misc import get_time_str
 from data.dataset_original import DancerDatasetOriginal
 from model.model_pipeline import Pipeline
 
+import os
+os.environ["WANDB__SERVICE_WAIT"] = "300"
+
 def init_logger():
     log_file = osp.join("log", f"train_{get_time_str()}.log")
     logger = get_root_logger(
@@ -53,6 +56,7 @@ def main():
 
     train_data_length = 0
 
+    wandb.login(key="f73ba40c8f47503a7c50b110fb21cb8f740a59dc")
     wandb.init(project='duet')
 
     for name in dataset_names:
@@ -65,7 +69,17 @@ def main():
 
     logger.info("Started training.")
 
-    model = Pipeline()
+    linear_num_features = 64
+    n_head = 8
+    latent_dim = 32
+    n_units = 32
+    seq_len = 64
+    no_input_prob = 0.1
+    velocity_loss_weight = 0.1
+    kl_loss_weight = 0.0001
+    mse_loss_weight = 0.5
+
+    model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
 
     prev_best_validation_loss = -1
 
