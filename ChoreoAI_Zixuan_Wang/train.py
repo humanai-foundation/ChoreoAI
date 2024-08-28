@@ -4,6 +4,7 @@ import logging
 import numpy as np
 from torch.utils.data import Subset, DataLoader
 import wandb
+from itertools import product
 
 from utils.logger import get_root_logger
 from utils.misc import get_time_str
@@ -57,7 +58,7 @@ def main():
     train_data_length = 0
 
     wandb.login(key="f73ba40c8f47503a7c50b110fb21cb8f740a59dc")
-    wandb.init(project='duet')
+    wandb.init(project='duet_hyperparameter_tuning')
 
     for name in dataset_names:
         train_loader, validation_loader = create_dataset_loader(name)
@@ -71,46 +72,63 @@ def main():
 
     linear_num_features = 64
     n_head = 8
-    latent_dim = 32
-    n_units = 32
+    latent_dim_all = [32, 64]
+    n_units_all = [32, 64]
     seq_len = 64
     no_input_prob = 0.1
-    velocity_loss_weight = 0.1
-    kl_loss_weight = 0.0001
+    velocity_loss_weight_all = [0.05, 0.1, 0.2]
+    kl_loss_weight_all = [0.00005, 0.0001]
     mse_loss_weight = 0.5
 
-    model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
+    hyperparameters_combinations = list(product(latent_dim_all, n_units_all, velocity_loss_weight_all, kl_loss_weight_all))
 
-    prev_best_validation_loss = -1
+    for latent_dim, n_units, velocity_loss_weight, kl_loss_weight in hyperparameters_combinations:
 
-    for epoch in range(epochs):
-        logger.info(f"Epoch: {epoch}")
-        train_loss = 0
+        logger.info(
+            f'linear_num_features: {linear_num_features}\n'
+            f'n_head: {n_head}\n'
+            f'latent_dim: {latent_dim}\n'
+            f'n_units: {n_units}\n'
+            f'seq_len: {seq_len}\n'
+            f'no_input_prob: {no_input_prob}\n'
+            f'velocity_loss_weight: {velocity_loss_weight}\n'
+            f'kl_loss_weight: {kl_loss_weight}\n'
+            f'mse_loss_weight: {mse_loss_weight}'
+        )
 
-        for train_loader in train_loaders:
-            logger.info(f"train loader size: {len(train_loader)}")
-            for train_data in train_loader:
-                model.feed_data(train_data)
-                cur_loss = model.optimize_parameters()
-                train_loss += cur_loss.item()
-                logger.info(f"one train data training loss: {cur_loss}")
+        model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
 
-        model.update_learning_rate()
-        wandb.log({'train/loss': train_loss / train_data_length})
-        logger.info(f"total training loss: {train_loss / train_data_length}")
+        prev_best_validation_loss = -1
 
-        validation_loss = 0
+        for epoch in range(epochs):
+            logger.info(f"Epoch: {epoch}")
+            train_loss = 0
 
-        for validation_loader in validation_loaders:
-            validation_loss += model.test(validation_loader)
-        
-        validation_loss /= len(validation_loaders)
-        logger.info(f"validation loss: {validation_loss}")
-        wandb.log({'validation/loss': validation_loss.item()})
+            for train_loader in train_loaders:
+                logger.info(f"train loader size: {len(train_loader)}")
+                for train_data in train_loader:
+                    model.feed_data(train_data)
+                    cur_loss = model.optimize_parameters()
+                    train_loss += cur_loss.item()
+                    logger.info(f"one train data training loss: {cur_loss}")
 
-        if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
-            prev_best_validation_loss = validation_loss
-            model.save_network()
+            model.update_learning_rate()
+            wandb.log({'train/loss': train_loss / train_data_length})
+            logger.info(f"total training loss: {train_loss / train_data_length}")
+
+            validation_loss = 0
+
+            for validation_loader in validation_loaders:
+                validation_loss += model.test(validation_loader)
+            
+            validation_loss /= len(validation_loaders)
+            logger.info(f"validation loss: {validation_loss}")
+            wandb.log({'validation/loss': validation_loss.item()})
+
+            if prev_best_validation_loss == -1 or validation_loss < prev_best_validation_loss:
+                prev_best_validation_loss = validation_loss
+                logger.info("save network...")
+                model.save_network()
 
 
 if __name__ == '__main__':
