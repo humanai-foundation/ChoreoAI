@@ -58,7 +58,6 @@ def main():
     train_data_length = 0
 
     wandb.login(key="f73ba40c8f47503a7c50b110fb21cb8f740a59dc")
-    wandb.init(project='duet_hyperparameter_tuning')
 
     for name in dataset_names:
         train_loader, validation_loader = create_dataset_loader(name)
@@ -99,6 +98,8 @@ def main():
         model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
 
         prev_best_validation_loss = -1
+        
+        wandb.init(project='duet_hyperparameter_tuning')
 
         for epoch in range(epochs):
             logger.info(f"Epoch: {epoch}")
