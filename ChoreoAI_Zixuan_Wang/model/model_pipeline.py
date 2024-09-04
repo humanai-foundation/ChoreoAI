@@ -52,14 +52,14 @@ class Pipeline:
         self.dancer1_next_timestamp = torch.tensor(data['dancer1_next_timestamp'], dtype=torch.float32).to(self.device)
         self.dancer2_next_timestamp = torch.tensor(data['dancer2_next_timestamp'], dtype=torch.float32).to(self.device)
 
-    def compute_loss(self, pred_data_1, pred_data_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet):
-        return self.criterion(pred_data_1, pred_data_2, self.dancer1_next_timestamp, self.dancer2_next_timestamp, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+    def compute_loss(self, pred_data_1, pred_data_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2):
+        return self.criterion(pred_data_1, pred_data_2, self.dancer1_next_timestamp, self.dancer2_next_timestamp, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2, self.dancer1_data, self.dancer2_data)
 
     def optimize_parameters(self):
         self.network.zero_grad()
-        pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet = self.network(self.dancer1_data, self.dancer2_data)
+        pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2 = self.network(self.dancer1_data, self.dancer2_data)
 
-        self.loss = self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+        self.loss = self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2)
 
         self.loss.backward()
         self.optimizer.step()

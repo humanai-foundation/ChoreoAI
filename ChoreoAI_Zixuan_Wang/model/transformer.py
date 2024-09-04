@@ -142,8 +142,10 @@ class DancerTransformer(nn.Module):
     
     def forward(self, d1, d2):
         rdm_val = torch.randn(1)
+        is_simplified_model = False
 
         # normalize data
+        # although here data is normalized, but the output should be in the scale of the original data? correct?
         combined = torch.stack((d1, d2), dim=-1)
         mean = combined.mean(dim=(2, 3, 4), keepdim=True)
         std = combined.std(dim=(2, 3, 4), keepdim=True)
@@ -153,22 +155,10 @@ class DancerTransformer(nn.Module):
         d2_normalized = combined_normalized[..., 1]
 
         if rdm_val < self.no_input_prob:
-            # no d1, d2 input
-            out_1, mean_1, log_var_1 = self.vae_1(torch.zeros_like(d1_normalized), no_input=True)
-            out_2, mean_2, log_var_2 = self.vae_2(torch.zeros_like(d2_normalized), no_input=True)
-            out_duet, mean_duet, log_var_duet = self.vae_duet(out_1, out_2)
-
-            # [batch_size, seq_len, 29 * 3]
-            memory_1 = out_1 + out_duet
-            memory_2 = out_2 + out_duet
-
-            batch_size, seq_len, _ = memory_1.shape
-            out_1 = out_1.view(batch_size, seq_len, 29, 3)
-            out_2 = out_2.view(batch_size, seq_len, 29, 3)
-
-            # transformer decoder
-            pred_2 = self.transformer_decoder_1(out_2, memory_1)
-            pred_1 = self.transformer_decoder_2(out_1, memory_2)
+            is_simplified_model = True
+            # only focus on one VAE model
+            out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)
+            out_2, mean_2, log_var_2 = self.vae_2(d2_normalized)
 
         else:
             out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)
@@ -183,7 +173,7 @@ class DancerTransformer(nn.Module):
             pred_2 = self.transformer_decoder_1(d2_normalized, memory_1)
             pred_1 = self.transformer_decoder_2(d1_normalized, memory_2)
 
-        return pred_1, pred_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet
+        return pred_1, pred_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from itertools import product
 
 from utils.logger import get_root_logger
 from utils.misc import get_time_str
-from data.dataset_original import DancerDatasetOriginal
+from data.dataset_original import DancerDatasetOriginal, DancerDatasetAugmented
 from model.model_pipeline import Pipeline
 
 import os
@@ -31,7 +31,8 @@ def preprocess_dataset(dancer_np):
 def create_dataset_loader(dataset_dir):
     dancer_np = np.load('dataset/' + dataset_dir)
     dancer1_np, dancer2_np = preprocess_dataset(dancer_np)
-    dataset = DancerDatasetOriginal(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
+    # dataset = DancerDatasetOriginal(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
+    dataset = DancerDatasetAugmented(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
 
     train_size = int(0.7 * len(dataset))
     validation_size = int(0.2 * len(dataset))
@@ -71,8 +72,8 @@ def main():
 
     linear_num_features = 64
     n_head = 8
-    latent_dim_all = [32, 64]
-    n_units_all = [32, 64]
+    latent_dim_all = [64]
+    n_units_all = [64]
     seq_len = 64
     no_input_prob = 0.1
     velocity_loss_weight_all = [0.05, 0.1, 0.2]
@@ -98,7 +99,7 @@ def main():
         model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
 
         prev_best_validation_loss = -1
-        
+
         wandb.init(project='duet_hyperparameter_tuning')
 
         for epoch in range(epochs):
