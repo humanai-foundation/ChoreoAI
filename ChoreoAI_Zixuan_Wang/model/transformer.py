@@ -140,12 +140,10 @@ class DancerTransformer(nn.Module):
         self.transformer_decoder_2 = TransformerDecoder(linear_num_features)
         self.no_input_prob = no_input_prob
     
-    def forward(self, d1, d2):
+    def forward(self, d1, d2, is_inference=False):
         rdm_val = torch.randn(1)
         is_simplified_model = False
 
-        # normalize data
-        # although here data is normalized, but the output should be in the scale of the original data? correct?
         combined = torch.stack((d1, d2), dim=-1)
         mean = combined.mean(dim=(2, 3, 4), keepdim=True)
         std = combined.std(dim=(2, 3, 4), keepdim=True)
@@ -154,11 +152,18 @@ class DancerTransformer(nn.Module):
         d1_normalized = combined_normalized[..., 0]
         d2_normalized = combined_normalized[..., 1]
 
-        if rdm_val < self.no_input_prob:
+        if not is_inference and rdm_val < self.no_input_prob:
             is_simplified_model = True
             # only focus on one VAE model
             out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)
             out_2, mean_2, log_var_2 = self.vae_2(d2_normalized)
+            batch_size, seq_len, _ = out_1.shape
+            out_1 = out_1.view(batch_size, seq_len, 29, 3)
+            out_2 = out_2.view(batch_size, seq_len, 29, 3)
+            pred_1 = None
+            pred_2 = None
+            mean_duet = None
+            log_var_duet = None
 
         else:
             out_1, mean_1, log_var_1 = self.vae_1(d1_normalized)

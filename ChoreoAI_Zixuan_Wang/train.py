@@ -8,7 +8,8 @@ from itertools import product
 
 from utils.logger import get_root_logger
 from utils.misc import get_time_str
-from data.dataset_original import DancerDatasetOriginal, DancerDatasetAugmented
+from data.dataset_original import DancerDatasetOriginal
+from data.dataset_augmented import DancerDatasetAugmented
 from model.model_pipeline import Pipeline
 
 import os
@@ -49,6 +50,12 @@ def main():
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 
+    seed = 42
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
     logger = init_logger()
 
     dataset_names = ['pose_extraction_img_9085.npy', 'pose_extraction_ilya_hannah_dyads.npy', 'pose_extraction_hannah_cassie.npy', 'pose_extraction_dyads_rehearsal_leah.npy']
@@ -72,17 +79,17 @@ def main():
 
     linear_num_features = 64
     n_head = 8
-    latent_dim_all = [64]
-    n_units_all = [64]
+    latent_dim_all = [64, 128, 256]
+    n_units_all = [64, 128, 256]
     seq_len = 64
-    no_input_prob = 0.1
+    no_input_prob_all = [0.1, 0.2, 0.3, 0.4]
     velocity_loss_weight_all = [0.05, 0.1, 0.2]
     kl_loss_weight_all = [0.00005, 0.0001]
     mse_loss_weight = 0.5
 
-    hyperparameters_combinations = list(product(latent_dim_all, n_units_all, velocity_loss_weight_all, kl_loss_weight_all))
+    hyperparameters_combinations = list(product(latent_dim_all, n_units_all, no_input_prob_all, velocity_loss_weight_all, kl_loss_weight_all))
 
-    for latent_dim, n_units, velocity_loss_weight, kl_loss_weight in hyperparameters_combinations:
+    for latent_dim, n_units, no_input_prob, velocity_loss_weight, kl_loss_weight in hyperparameters_combinations:
 
         logger.info(
             f'linear_num_features: {linear_num_features}\n'
@@ -96,11 +103,12 @@ def main():
             f'mse_loss_weight: {mse_loss_weight}'
         )
 
+        wandb.init(project='duet_hyperparameter_tuning_new', reinit=True)
+        wandb.run.name = f"linear_num_features_{linear_num_features}_n_head_{n_head}_latent_dim_{latent_dim}_n_units_{n_units}_seq_len_{seq_len}_no_input_prob_{no_input_prob}_velocity_loss_weight_{velocity_loss_weight}_kl_loss_weight_{kl_loss_weight}_mse_loss_weight_{mse_loss_weight}"
+
         model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
 
         prev_best_validation_loss = -1
-
-        wandb.init(project='duet_hyperparameter_tuning')
 
         for epoch in range(epochs):
             logger.info(f"Epoch: {epoch}")
@@ -131,6 +139,8 @@ def main():
                 prev_best_validation_loss = validation_loss
                 logger.info("save network...")
                 model.save_network()
+
+        wandb.finish()
 
 
 if __name__ == '__main__':

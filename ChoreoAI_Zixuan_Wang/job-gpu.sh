@@ -1,7 +1,8 @@
 #!/bin/bash
 #SBATCH -A m4474
 #SBATCH -C gpu
-#SBATCH -t 01:00:00
+#SBATCH -q shared
+#SBATCH -t 48:00:00
 #SBATCH -n 1
 #SBATCH -c 32
 #SBATCH --gpus-per-task=1

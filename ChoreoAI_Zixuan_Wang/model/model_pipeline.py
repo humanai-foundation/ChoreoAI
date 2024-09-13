@@ -85,7 +85,7 @@ class Pipeline:
         self.scheduler.step()
 
     def save_network(self, param_key='params'):
-        save_filename = "best_model" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + "_velo_" + str(self.velocity_loss_weight) + "_kl_" + str(self.kl_loss_weight) + "_mse_" + str(self.mse_loss_weight) + ".pth"
+        save_filename = "best_model" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + "_velo_" + str(self.velocity_loss_weight) + "_kl_" + str(self.kl_loss_weight) + "_mse_" + str(self.mse_loss_weight) + "_0906.pth"
         save_path = os.path.join("result", save_filename)
 
         param_key = param_key if isinstance(param_key, list) else [param_key]
@@ -111,8 +111,8 @@ class Pipeline:
         with torch.no_grad():
             for test_data in test_loader:
                 self.feed_data(test_data)
-                pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet = self.network(self.dancer1_data, self.dancer2_data)
-                cur_loss += self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+                pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2 = self.network(self.dancer1_data, self.dancer2_data, is_inference=True)
+                cur_loss += self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2)
 
             cur_loss /= len(test_loader)
         self.network.train()
