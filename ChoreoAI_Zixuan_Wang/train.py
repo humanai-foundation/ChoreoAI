@@ -88,10 +88,10 @@ def main():
     no_input_prob_all = [0.1]
     # velocity_loss_weight_all = [0.0, 0.05, 0.1, 0.2]
     velocity_loss_weight_all = [0.05]
-    kl_loss_weight_all = [0.00005, 0.0001]
+    kl_loss_weight_all = [0.00005]
     # kl_loss_weight_all = [0.0001]
     mse_loss_weight = 0.5
-    frames_all = [1]
+    frames_all = [5]
 
     hyperparameters_combinations = list(product(latent_dim_all, n_units_all, no_input_prob_all, velocity_loss_weight_all, kl_loss_weight_all, frames_all))
 

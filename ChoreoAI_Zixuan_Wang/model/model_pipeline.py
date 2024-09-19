@@ -86,7 +86,7 @@ class Pipeline:
         self.scheduler.step()
 
     def save_network(self, param_key='params'):
-        save_filename = "best_model" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + "_velo_" + str(self.velocity_loss_weight) + "_kl_" + str(self.kl_loss_weight) + "_mse_" + str(self.mse_loss_weight) + "_frames_" + self.frames + ".pth"
+        save_filename = "best_model" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + "_velo_" + str(self.velocity_loss_weight) + "_kl_" + str(self.kl_loss_weight) + "_mse_" + str(self.mse_loss_weight) + "_frames_" + str(self.frames) + ".pth"
         save_path = os.path.join("result", save_filename)
 
         param_key = param_key if isinstance(param_key, list) else [param_key]
