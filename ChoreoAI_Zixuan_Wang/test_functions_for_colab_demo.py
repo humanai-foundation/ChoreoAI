@@ -152,7 +152,7 @@ def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zco
     if zcolor is None:
         zcolor = np.zeros(seq.shape[1])
 
-    fig = plt.figure(figsize=figsize, dpi=200)
+    fig = plt.figure(figsize=figsize, dpi=50)
     ax = plt.axes(projection='3d')
 
     # The following lines eliminate background lines/axes:
@@ -427,15 +427,15 @@ class DancerDatasetOriginal(torch.utils.data.Dataset):
 def load_network(net, load_path, strict=True, param_key='params'):
     if isinstance(net, (DataParallel, DistributedDataParallel)):
         net = net.module
-        load_net = torch.load(
-            load_path, map_location=lambda storage, loc: storage)
-        if param_key is not None:
-            load_net = load_net[param_key]
-        for k, v in deepcopy(load_net).items():
-            if k.startswith('module.'):
-                load_net[k[7:]] = v
-                load_net.pop(k)
-        net.load_state_dict(load_net, strict=strict)
+    load_net = torch.load(
+        load_path, map_location=lambda storage, loc: storage)
+    if param_key is not None:
+        load_net = load_net[param_key]
+    for k, v in deepcopy(load_net).items():
+        if k.startswith('module.'):
+            load_net[k[7:]] = v
+            load_net.pop(k)
+    net.load_state_dict(load_net, strict=strict)
 
 
 def preprocess_dataset(dancer_np):
