@@ -445,9 +445,7 @@ def preprocess_dataset(dancer_np):
 
 
 def create_test_dataset(dataset_dir):
-    print('loading...')
     dancer_np = np.load(dataset_dir, allow_pickle=True)
-    print('shape', dancer_np.shape)
     dancer1_np, dancer2_np = preprocess_dataset(dancer_np)
     dataset = DancerDatasetOriginal(torch.from_numpy(dancer1_np), torch.from_numpy(dancer2_np), 64)
 
