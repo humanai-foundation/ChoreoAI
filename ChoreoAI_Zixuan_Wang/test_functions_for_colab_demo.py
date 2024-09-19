@@ -121,7 +121,7 @@ def put_lines(ax, segments, color=None, lw=2.5, alpha=None, skeleton=True, skele
         l = ax.plot(np.linspace(segments[i, 0, 0],segments[i, 0, 1], 2),
                 np.linspace(segments[i, 1, 0], segments[i, 1, 1], 2),
                 np.linspace(segments[i, 2, 0], segments[i, 2, 1], 2),
-                # color=c,
+                color=c,
                 alpha=alpha,
                 lw=lw)[0]
         lines.append(l)
