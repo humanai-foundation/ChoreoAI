@@ -83,6 +83,8 @@ for i in range(29):
 
 all_idxs = skeleton_idxs + cloud_idxs
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 def get_line_segments(seq, zcolor=None, cmap=None, cloud=False, edge_types=None, edge_class=None):
     xline = np.zeros((seq.shape[0], len(all_idxs), 3, 2))
     if cmap:
@@ -357,9 +359,9 @@ class TransformerDecoder(nn.Module):
 class DancerTransformer(nn.Module):
     def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, default_log_var=0.5):
         super(DancerTransformer, self).__init__()
-        self.vae_1 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var)
-        self.vae_2 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var)
-        self.vae_duet = VAEForDuet(linear_num_features, n_head, latent_dim, n_units, seq_len)
+        self.vae_1 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var, device=device)
+        self.vae_2 = VAEForSingleDancer(linear_num_features, n_head, latent_dim, n_units, seq_len, default_log_var, device=device)
+        self.vae_duet = VAEForDuet(linear_num_features, n_head, latent_dim, n_units, seq_len, device=device)
         self.transformer_decoder_1 = TransformerDecoder(linear_num_features)
         self.transformer_decoder_2 = TransformerDecoder(linear_num_features)
         self.no_input_prob = no_input_prob
