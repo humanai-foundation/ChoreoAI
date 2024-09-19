@@ -148,7 +148,7 @@ def put_lines(ax, segments, color=None, lw=2.5, alpha=None, skeleton=True, skele
 # `ghost` may be a second sequence, which will be superimposed on the primary sequence.
 # If ghost_shift is given, the primary and ghost sequence will be separated laterally by that amount.
 # `zcolor` may be an N-length array, where N is the number of vertices in seq, and will be used to color the vertices. Typically this is set to the avg. z-value of each vtx.
-def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zcolor=None, pointer=None, ax_lims=(-0.4, 0.4), speed=45, dot_size=20, dot_alpha=0.5, lw=2.5, cmap='cool_r', pointer_color='black', cloud=False, cloud_alpha=0.03, skeleton=True, skeleton_alpha=0.3, dpi=50):
+def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zcolor=None, pointer=None, ax_lims=(-0.4, 0.4), ay_lims=(-1, 1), az_lims=(-1, 1), speed=45, dot_size=20, dot_alpha=0.5, lw=2.5, cmap='cool_r', pointer_color='black', cloud=False, cloud_alpha=0.03, skeleton=True, skeleton_alpha=0.3, dpi=50):
     if zcolor is None:
         zcolor = np.zeros(seq.shape[1])
 
@@ -181,8 +181,8 @@ def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zco
 
     if ax_lims:
         ax.set_xlim(*ax_lims)
-        ax.set_ylim(*ax_lims)
-        ax.set_zlim(*ax_lims)
+        ax.set_ylim(*ay_lims)
+        ax.set_zlim(*az_lims)
 
     plt.close(fig)
     xline, colors = get_line_segments(seq, zcolor, cm)
