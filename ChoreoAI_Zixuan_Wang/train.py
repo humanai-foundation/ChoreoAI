@@ -79,17 +79,23 @@ def main():
 
     linear_num_features = 64
     n_head = 8
-    latent_dim_all = [64, 128, 256]
-    n_units_all = [64, 128, 256]
+    # latent_dim_all = [64, 128, 256]
+    # n_units_all = [64, 128, 256]
+    latent_dim_all = [64]
+    n_units_all = [64]
     seq_len = 64
-    no_input_prob_all = [0.1, 0.2, 0.3, 0.4]
-    velocity_loss_weight_all = [0.05, 0.1, 0.2]
+    # no_input_prob_all = [0.1, 0.2, 0.3]
+    no_input_prob_all = [0.1]
+    # velocity_loss_weight_all = [0.0, 0.05, 0.1, 0.2]
+    velocity_loss_weight_all = [0.05]
     kl_loss_weight_all = [0.00005, 0.0001]
+    # kl_loss_weight_all = [0.0001]
     mse_loss_weight = 0.5
+    frames_all = [1]
 
-    hyperparameters_combinations = list(product(latent_dim_all, n_units_all, no_input_prob_all, velocity_loss_weight_all, kl_loss_weight_all))
+    hyperparameters_combinations = list(product(latent_dim_all, n_units_all, no_input_prob_all, velocity_loss_weight_all, kl_loss_weight_all, frames_all))
 
-    for latent_dim, n_units, no_input_prob, velocity_loss_weight, kl_loss_weight in hyperparameters_combinations:
+    for latent_dim, n_units, no_input_prob, velocity_loss_weight, kl_loss_weight, frames in hyperparameters_combinations:
 
         logger.info(
             f'linear_num_features: {linear_num_features}\n'
@@ -101,12 +107,13 @@ def main():
             f'velocity_loss_weight: {velocity_loss_weight}\n'
             f'kl_loss_weight: {kl_loss_weight}\n'
             f'mse_loss_weight: {mse_loss_weight}'
+            f'frames: {frames}'
         )
 
         wandb.init(project='duet_hyperparameter_tuning_new', reinit=True)
-        wandb.run.name = f"linear_num_features_{linear_num_features}_n_head_{n_head}_latent_dim_{latent_dim}_n_units_{n_units}_seq_len_{seq_len}_no_input_prob_{no_input_prob}_velocity_loss_weight_{velocity_loss_weight}_kl_loss_weight_{kl_loss_weight}_mse_loss_weight_{mse_loss_weight}"
+        wandb.run.name = f"linear_num_features_{linear_num_features}_n_head_{n_head}_latent_dim_{latent_dim}_n_units_{n_units}_seq_len_{seq_len}_no_input_prob_{no_input_prob}_velocity_loss_weight_{velocity_loss_weight}_kl_loss_weight_{kl_loss_weight}_mse_loss_weight_{mse_loss_weight}_frames_{frames}"
 
-        model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight)
+        model = Pipeline(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight, frames)
 
         prev_best_validation_loss = -1
 

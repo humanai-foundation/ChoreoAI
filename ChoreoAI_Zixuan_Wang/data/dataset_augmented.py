@@ -20,6 +20,7 @@ class DancerDatasetAugmented(torch.utils.data.Dataset):
             dancer2_data = self.data2[index: index + self.seq_len]
         
         else:
+            index = index % self.dataset_length
             dancer1_data = self.add_noise(self.data1[index: index + self.seq_len])
             dancer2_data = self.add_noise(self.data2[index: index + self.seq_len])
 
