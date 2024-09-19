@@ -5,7 +5,7 @@ Blog post for summarizing my work: [blog post](https://wang-zixuan.github.io/pos
 
 Contributor page of GSoC: [Zixuan Wang](https://summerofcode.withgoogle.com/programs/2024/projects/PEvVr15z). Evaluation test repo: [repo link](https://github.com/wang-zixuan/AI_Enabled_Choreography).
 
-I would like to thank my advisors [Mariel Pettee](https://marielpettee.com/) and [Ilya Vidrin](https://www.ilyavidrin.com/) for their guidance, and my partner [Luis Zerkowski](https://github.com/Luizerko) for his help.
+I would like to thank my advisors [Mariel Pettee](https://marielpettee.com/) and [Ilya Vidrin](https://www.ilyavidrin.com/) for their guidance, and my collegue [Luis Zerkowski](https://github.com/Luizerko) for his help.
 
 ## Goals
 ### Problem Addressed
@@ -30,7 +30,8 @@ The comprehensive solution plan involves:
 ```
 .
 ├── data
-│   └── dataset.py
+│   ├── dataset_augmented.py
+│   └── dataset_original.py
 ├── dataset
 │   ├── pose_extraction_dyads_rehearsal_leah.npy
 │   ├── pose_extraction_hannah_cassie.npy
@@ -40,7 +41,9 @@ The comprehensive solution plan involves:
 │   └── reconstruction_loss.py
 ├── model
 │   ├── model_pipeline.py
+│   ├── README.md
 │   └── transformer.py
+├── plot.py
 ├── pose_extraction
 │   ├── imgs
 │   ├── INSTALL.md
@@ -49,6 +52,7 @@ The comprehensive solution plan involves:
 ├── README.md
 ├── result
 │   └── best_model.pth
+├── test_functions_for_colab_demo.py
 ├── test.py
 ├── train.py
 ├── utils
@@ -67,3 +71,8 @@ Please refer to [this document](pose_extraction/README.md) for more details.
 </div>
 
 The model includes 3 VAEs, separately for dancer 1, dancer 2, and duet. Each VAE contains encoder and decoder, and encoder contains self-attention layer and LSTM layer. VAE for duet will receive original data of dancer 1 and dancer 2, and simply calculate the distance between two dancers to measure proximity. Then, it will generate two sequences representing interrelation for each dancer.
+
+Refer to [this document](model/README.md) for more details.
+
+### Google Colab Test Demo
+[Colab link](https://colab.research.google.com/drive/1_UhiZ3LczwTCqnzfObKShWeaYSLlvwzW?usp=sharing)
