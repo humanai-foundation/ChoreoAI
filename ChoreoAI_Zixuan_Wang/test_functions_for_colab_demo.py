@@ -430,7 +430,7 @@ def load_network(net, load_path, strict=True, param_key='params'):
     if isinstance(net, (DataParallel, DistributedDataParallel)):
         net = net.module
     load_net = torch.load(
-        load_path, map_location=lambda storage, loc: storage)
+        load_path, map_location=lambda storage, loc: storage, weights_only=True)
     if param_key is not None:
         load_net = load_net[param_key]
     for k, v in deepcopy(load_net).items():
