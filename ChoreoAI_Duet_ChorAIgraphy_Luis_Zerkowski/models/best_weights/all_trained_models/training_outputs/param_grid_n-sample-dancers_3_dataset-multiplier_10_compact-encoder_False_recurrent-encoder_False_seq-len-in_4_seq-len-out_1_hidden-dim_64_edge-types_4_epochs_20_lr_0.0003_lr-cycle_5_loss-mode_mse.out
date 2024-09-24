@@ -1,0 +1,81 @@
+######## Array Information Coming From Original Videos ########
+Joint poses pose_extraction_img_9085.npy shape: (6406, 58, 3)
+
+Joint poses pose_extraction_ilya_hannah_dyads.npy shape: (4520, 58, 3)
+
+Joint poses pose_extraction_dyads_rehearsal_leah.npy shape: (7141, 58, 3)
+
+Joint poses pose_extraction_hannah_cassie.npy shape: (6522, 58, 3)
+
+######## Total Number of Edges: 1794 ########
+
+Sampled joints for dancer 1: [17  7  8], and dancer 2: [43 44 45]
+
+######## Total Number of Sampled Edges: 18 ########
+
+######## Data Structures Created For Training ########
+
+Shape of tensor with all sequences: torch.Size([24573, 4, 6, 6])
+Length of each choreography: [6402, 4516, 7137, 6518]
+
+Shape of training data with all sequences: torch.Size([20885, 4, 6, 6])
+Length of each choreography in training dataset: [5441, 3838, 6066, 5540]
+
+Shape of validation data with all sequences: torch.Size([3688, 4, 6, 6])
+Length of each choreography in validation dataset: [961, 678, 1071, 978]
+
+Training Epochs:   0%|          | 0/20 [00:00<?, ?it/s]                                                       Training Epochs:   0%|          | 0/20 [48:41<?, ?it/s]                                                       Training Epochs:   0%|          | 0/20 [54:41<?, ?it/s]                                                       Training Epochs:   0%|          | 0/20 [54:41<?, ?it/s]Training Epochs:   5%|▌         | 1/20 [54:41<17:19:06, 3281.40s/it]                                                                    Training Epochs:   5%|▌         | 1/20 [1:42:46<17:19:06, 3281.40s/it]                                                                      Training Epochs:   5%|▌         | 1/20 [1:48:52<17:19:06, 3281.40s/it]                                                                      Training Epochs:   5%|▌         | 1/20 [1:48:52<17:19:06, 3281.40s/it]Training Epochs:  10%|█         | 2/20 [1:48:52<16:19:04, 3263.59s/it]                                                                      Training Epochs:  10%|█         | 2/20 [2:37:42<16:19:04, 3263.59s/it]                                                                      Training Epochs:  10%|█         | 2/20 [2:43:46<16:19:04, 3263.59s/it]                                                                      Training Epochs:  10%|█         | 2/20 [2:43:46<16:19:04, 3263.59s/it]Training Epochs:  15%|█▌        | 3/20 [2:43:46<15:28:39, 3277.61s/it]                                                                      Training Epochs:  15%|█▌        | 3/20 [3:32:01<15:28:39, 3277.61s/it]                                                                      Training Epochs:  15%|█▌        | 3/20 [3:38:02<15:28:39, 3277.61s/it]                                                                      Training Epochs:  15%|█▌        | 3/20 [3:38:02<15:28:39, 3277.61s/it]Training Epochs:  20%|██        | 4/20 [3:38:02<14:31:45, 3269.11s/it]                                                                      Training Epochs:  20%|██        | 4/20 [4:26:09<14:31:45, 3269.11s/it]                                                                      Training Epochs:  20%|██        | 4/20 [4:32:05<14:31:45, 3269.11s/it]                                                                      Training Epochs:  20%|██        | 4/20 [4:32:05<14:31:45, 3269.11s/it]Training Epochs:  25%|██▌       | 5/20 [4:32:05<13:34:52, 3259.49s/it]                                                                      Training Epochs:  25%|██▌       | 5/20 [5:19:48<13:34:52, 3259.49s/it]                                                                      Training Epochs:  25%|██▌       | 5/20 [5:25:51<13:34:52, 3259.49s/it]                                                                      Training Epochs:  25%|██▌       | 5/20 [5:25:51<13:34:52, 3259.49s/it]Training Epochs:  30%|███       | 6/20 [5:25:51<12:37:54, 3248.17s/it]                                                                      Training Epochs:  30%|███       | 6/20 [6:14:16<12:37:54, 3248.17s/it]                                                                      Training Epochs:  30%|███       | 6/20 [6:20:16<12:37:54, 3248.17s/it]                                                                      Training Epochs:  30%|███       | 6/20 [6:20:16<12:37:54, 3248.17s/it]Training Epochs:  35%|███▌      | 7/20 [6:20:16<11:44:57, 3253.62s/it]                                                                      Training Epochs:  35%|███▌      | 7/20 [7:07:55<11:44:57, 3253.62s/it]                                                                      Training Epochs:  35%|███▌      | 7/20 [7:13:55<11:44:57, 3253.62s/it]                                                                      Training Epochs:  35%|███▌      | 7/20 [7:13:55<11:44:57, 3253.62s/it]Training Epochs:  40%|████      | 8/20 [7:13:55<10:48:33, 3242.80s/it]                                                                      Training Epochs:  40%|████      | 8/20 [8:01:36<10:48:33, 3242.80s/it]                                                                      Training Epochs:  40%|████      | 8/20 [8:07:38<10:48:33, 3242.80s/it]                                                                      Training Epochs:  40%|████      | 8/20 [8:07:39<10:48:33, 3242.80s/it]Training Epochs:  45%|████▌     | 9/20 [8:07:39<9:53:22, 3236.62s/it]                                                                      Training Epochs:  45%|████▌     | 9/20 [8:55:22<9:53:22, 3236.62s/it]                                                                     Training Epochs:  45%|████▌     | 9/20 [9:01:21<9:53:22, 3236.62s/it]Training Epochs:  50%|█████     | 10/20 [9:01:21<8:58:42, 3232.23s/it]                                                                      Training Epochs:  50%|█████     | 10/20 [9:48:51<8:58:42, 3232.23s/it]                                                                      Training Epochs:  50%|█████     | 10/20 [9:54:53<8:58:42, 3232.23s/it]                                                                      Training Epochs:  50%|█████     | 10/20 [9:54:53<8:58:42, 3232.23s/it]Training Epochs:  55%|█████▌    | 11/20 [9:54:53<8:03:54, 3226.10s/it]                                                                      Training Epochs:  55%|█████▌    | 11/20 [10:42:39<8:03:54, 3226.10s/it]                                                                       Training Epochs:  55%|█████▌    | 11/20 [10:48:35<8:03:54, 3226.10s/it]                                                                       Training Epochs:  55%|█████▌    | 11/20 [10:48:35<8:03:54, 3226.10s/it]Training Epochs:  60%|██████    | 12/20 [10:48:35<7:09:59, 3224.93s/it]                                                                       Training Epochs:  60%|██████    | 12/20 [11:36:28<7:09:59, 3224.93s/it]                                                                       Training Epochs:  60%|██████    | 12/20 [11:42:28<7:09:59, 3224.93s/it]                                                                       Training Epochs:  60%|██████    | 12/20 [11:42:28<7:09:59, 3224.93s/it]Training Epochs:  65%|██████▌   | 13/20 [11:42:28<6:16:30, 3227.18s/it]                                                                       Training Epochs:  65%|██████▌   | 13/20 [12:29:57<6:16:30, 3227.18s/it]                                                                       Training Epochs:  65%|██████▌   | 13/20 [12:36:00<6:16:30, 3227.18s/it]                                                                       Training Epochs:  65%|██████▌   | 13/20 [12:36:00<6:16:30, 3227.18s/it]Training Epochs:  70%|███████   | 14/20 [12:36:00<5:22:16, 3222.79s/it]                                                                       Training Epochs:  70%|███████   | 14/20 [13:23:52<5:22:16, 3222.79s/it]                                                                       Training Epochs:  70%|███████   | 14/20 [13:29:54<5:22:16, 3222.79s/it]Training Epochs:  75%|███████▌  | 15/20 [13:29:54<4:28:49, 3225.91s/it]                                                                       Training Epochs:  75%|███████▌  | 15/20 [14:17:28<4:28:49, 3225.91s/it]                                                                       Training Epochs:  75%|███████▌  | 15/20 [14:23:20<4:28:49, 3225.91s/it]Training Epochs:  80%|████████  | 16/20 [14:23:20<3:34:39, 3219.99s/it]                                                                       Training Epochs:  80%|████████  | 16/20 [15:10:40<3:34:39, 3219.99s/it]                                                                       Training Epochs:  80%|████████  | 16/20 [15:16:34<3:34:39, 3219.99s/it]Training Epochs:  85%|████████▌ | 17/20 [15:16:34<2:40:37, 3212.36s/it]                                                                       Training Epochs:  85%|████████▌ | 17/20 [16:03:38<2:40:37, 3212.36s/it]                                                                       Training Epochs:  85%|████████▌ | 17/20 [16:09:28<2:40:37, 3212.36s/it]Training Epochs:  90%|█████████ | 18/20 [16:09:28<1:46:41, 3200.80s/it]                                                                       Training Epochs:  90%|█████████ | 18/20 [16:56:37<1:46:41, 3200.80s/it]                                                                       Training Epochs:  90%|█████████ | 18/20 [17:02:31<1:46:41, 3200.80s/it]Training Epochs:  95%|█████████▌| 19/20 [17:02:31<53:15, 3195.32s/it]                                                                       Training Epochs:  95%|█████████▌| 19/20 [17:49:48<53:15, 3195.32s/it]                                                                     Training Epochs:  95%|█████████▌| 19/20 [17:55:28<53:15, 3195.32s/it]Training Epochs: 100%|██████████| 20/20 [17:55:28<00:00, 3189.98s/it]Training Epochs: 100%|██████████| 20/20 [17:55:28<00:00, 3226.44s/it]
+Epoch: 0001, KL Loss (train): 0.0206, Reconstruction Loss (train): 0.0068, Combined Loss (train): 0.0068, time: 2921.1132s
+Epoch: 0001, KL Loss (val): 0.0546, Reconstruction Loss (val): 0.1714, Combined Loss (val): 0.1714, time: 360.0398s
+Epoch: 0001, Saving best parameters!
+Epoch: 0002, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0063, Combined Loss (train): 0.0063, time: 2885.4630s
+Epoch: 0002, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0105, Combined Loss (val): 0.0105, time: 365.5833s
+Epoch: 0002, Saving best parameters!
+Epoch: 0003, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0062, Combined Loss (train): 0.0062, time: 2930.1165s
+Epoch: 0003, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0103, Combined Loss (val): 0.0103, time: 364.1529s
+Epoch: 0003, Saving best parameters!
+Epoch: 0004, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0061, Combined Loss (train): 0.0061, time: 2894.8276s
+Epoch: 0004, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0102, Combined Loss (val): 0.0102, time: 360.9908s
+Epoch: 0004, Saving best parameters!
+Epoch: 0005, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2886.4951s
+Epoch: 0005, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0102, Combined Loss (val): 0.0102, time: 355.9009s
+Epoch: 0005, Saving best parameters!
+Epoch: 0006, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2863.2282s
+Epoch: 0006, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0101, Combined Loss (val): 0.0101, time: 362.9378s
+Epoch: 0006, Saving best parameters!
+Epoch: 0007, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2905.0893s
+Epoch: 0007, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 359.7230s
+Epoch: 0007, Saving best parameters!
+Epoch: 0008, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2859.3834s
+Epoch: 0008, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 360.2182s
+Epoch: 0008, Saving best parameters!
+Epoch: 0009, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2860.9884s
+Epoch: 0009, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 362.0089s
+Epoch: 0009, Saving best parameters!
+Epoch: 0010, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2863.9664s
+Epoch: 0010, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 358.4360s
+Epoch: 0011, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0060, Combined Loss (train): 0.0060, time: 2850.2395s
+Epoch: 0011, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 361.9440s
+Epoch: 0011, Saving best parameters!
+Epoch: 0012, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2865.8000s
+Epoch: 0012, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0100, Combined Loss (val): 0.0100, time: 356.4228s
+Epoch: 0012, Saving best parameters!
+Epoch: 0013, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2873.1062s
+Epoch: 0013, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 359.2320s
+Epoch: 0013, Saving best parameters!
+Epoch: 0014, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2848.9602s
+Epoch: 0014, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 363.6396s
+Epoch: 0014, Saving best parameters!
+Epoch: 0015, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2871.6686s
+Epoch: 0015, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 361.4605s
+Epoch: 0016, KL Loss (train): -0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2854.5889s
+Epoch: 0016, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 351.6544s
+Epoch: 0017, KL Loss (train): 0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2840.3960s
+Epoch: 0017, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 354.2095s
+Epoch: 0018, KL Loss (train): -0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2823.2955s
+Epoch: 0018, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 350.6139s
+Epoch: 0019, KL Loss (train): -0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2828.3318s
+Epoch: 0019, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 354.2201s
+Epoch: 0020, KL Loss (train): -0.0000, Reconstruction Loss (train): 0.0059, Combined Loss (train): 0.0059, time: 2836.7283s
+Epoch: 0020, KL Loss (val): 0.0000, Reconstruction Loss (val): 0.0099, Combined Loss (val): 0.0099, time: 340.7861s
+Optimization Finished!

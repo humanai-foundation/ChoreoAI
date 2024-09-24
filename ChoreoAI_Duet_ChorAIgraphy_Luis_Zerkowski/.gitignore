@@ -1,6 +1,8 @@
 .ipynb_checkpoints/
 
-evaluation_test/
+evaluation_test/__pycache__
+evaluation_test/gsoc_application.pdf
+evaluation_test/data/*.pt*
 
 pose_extraction/ilya_poses
 pose_extraction/.ipynb_checkpoints
@@ -9,4 +11,6 @@ pose_extraction/3d_pose_extraction/test/vis/
 
 models/.ipynb_checkpoints/
 models/__pycache__/
-models/data/*.npy
+models/NRI_particles_test_*
+models/graphs
+models/best_weights/nri_particles*

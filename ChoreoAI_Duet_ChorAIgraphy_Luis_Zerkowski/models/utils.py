@@ -44,15 +44,69 @@ def animation(sequence, skeleton, n_joints, interval=100):
     return FuncAnimation(fig, update, frames=range(len(sequence_x)), interval=interval, blit=False)
 
 
+# Defining velocity function
+def compute_velocities(data, frame_gap=2):
+    velocities = data[frame_gap:] - data[:-frame_gap]
+
+    # Repeating velocity for final frames
+    padding = velocities[-1, :, :].repeat(frame_gap, 1, 1)
+
+    velocities = torch.cat((velocities, padding), dim=0)
+    
+    # Fixing velocity configuration
+    velocities = velocities[:, :, [2, 0, 1]]
+    velocities[:, :, 2] = -velocities[:, :, 2]
+    
+    return velocities
+
+
+########## REMOVED PIECE OF CODE. NOW WE IMPLEMENT ROTATION WITHIN BATCH PROCESSING AND ONLY ALONG Z-AXIS ##########
+# # Rotation along X-axis function
+# def rotation_matrix_x(angle):
+#     c, s = np.cos(angle), np.sin(angle)
+    
+#     return np.array([[1, 0, 0],
+#                      [0, c, -s],
+#                      [0, s, c]])
+
+# # Rotation along Y-axis function
+# def rotation_matrix_y(angle):
+#     c, s = np.cos(angle), np.sin(angle)
+    
+#     return np.array([[c, 0, s],
+#                      [0, 1, 0],
+#                      [-s, 0, c]])
+
+# # Computing final rotation matrix
+# def rotate_points(points, angle_x, angle_y, angle_z):
+#     Rx = rotation_matrix_x(angle_x)
+#     Ry = rotation_matrix_y(angle_y)
+#     Rz = rotation_matrix_z(angle_z)
+    
+#     rotation_matrix = Rz @ Ry @ Rx
+#     rotated_points = points @ rotation_matrix.T
+    
+#     return rotated_points
+
+# Rotation along Z-axis function
+def rotation_matrix_z(angle):
+    c, s = torch.cos(angle), torch.sin(angle)
+    
+    return torch.tensor([[c, -s, 0],
+                         [s, c, 0],
+                         [0, 0, 1]], dtype=torch.float32)
+
+
 #### NRI auxiliar functions ####
 # Creating message passing matrices for receivers and senders - shape R^(E x N)
 def message_passing_matrices(n_joints, edge_index):
     message_passing_in = torch.zeros((edge_index.size(1), n_joints))
     message_passing_out = torch.zeros((edge_index.size(1), n_joints))
 
-    for j in range(edge_index.size(1)):
-        message_passing_out[j, int(edge_index[0, j])] = 1.
-        message_passing_in[j, int(edge_index[1, j])] = 1.
+    # Vectorizing message_passing matrices creation
+    edge_indices = torch.arange(edge_index.size(1))
+    message_passing_out[edge_indices, edge_index[0]] = 1.
+    message_passing_in[edge_indices, edge_index[1]] = 1.
 
     return message_passing_in, message_passing_out
 
@@ -89,9 +143,9 @@ def gumbel_softmax_kl_divergence(logits, log_prior, batch_size):
 
 
 # Gaussian NLL loss
-def nll_gaussian_loss():
-    return nn.GaussianNLLLoss(reduction='sum')
+def nll_gaussian_loss(reduction='mean'):
+    return nn.GaussianNLLLoss(reduction=reduction)
 
 # MSE loss
-def mse_loss():
-    return nn.MSELoss(reduction='sum')
+def mse_loss(reduction='mean'):
+    return nn.MSELoss(reduction=reduction)
