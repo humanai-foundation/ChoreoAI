@@ -4,7 +4,7 @@ High-quality training data is essential for an AI model. In order to extract 3D 
 We had no luck in managing configuration of OpenPose, so we switched to AlphaPose, which provided many different kinds of models for both 2D and 3D inference. 
 
 ### AlphaPose Installation
-I would like to thank Mariel for providing the computing resources on Perlmutter. The installation document of AlphaPose on Perlmutter can be found [in this documentation](INSTALL.md). I have to admit that it focuses on a specific server, but I believe that it can be applied to any Linux server with CUDA driver version >= 12.0.
+I would like to thank Mariel for providing the computing resources on Perlmutter. The installation document of AlphaPose on Perlmutter can be found [in this documentation](INSTALL.md). It focuses on a specific server, but I believe that it can be applied to any Linux server with CUDA driver version >= 12.0.
 
 ### Model Inference
 
