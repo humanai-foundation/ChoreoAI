@@ -1,4 +1,6 @@
 ## Welcome to ChoreoAI!
+![](assets/image-1.png)
+
 Hi guys! Welcome to my repository for [Google Summer of Code 2024 - AI-Generated Choreography - from Solos to Duets](https://humanai.foundation/gsoc/2024/proposal_ChoreoAI1.html). This project focuses on leveraging cutting-edge AI technologies to innovate the way choreographies are created, focusing particularly on duets. This is my [Contributor Profile of GSoC](https://summerofcode.withgoogle.com/programs/2024/projects/PEvVr15z). To learn more about the developmental insights, check out my [blog post](https://wang-zixuan.github.io/posts/2024/gsoc_2024).
 
 For a hands-on experience, dive into my [Google Colab Notebook](https://colab.research.google.com/drive/1_UhiZ3LczwTCqnzfObKShWeaYSLlvwzW?usp=sharing) which provides an interactive demonstration of the network.
