@@ -54,7 +54,7 @@ For comprehensive details on converting raw duet videos into 3D joint data, plea
   <img src="assets/network.png" width="50%" />
 </div>
 
-The model includes 3 VAEs, separately for dancer 1, dancer 2, and duet. Each VAE contains encoder and decoder, and encoder contains self-attention layer and LSTM layer. VAE for duet will receive original data of dancer 1 and dancer 2, and calculate the distance between two dancers to measure proximity. Then, it will generate two sequences representing interrelation for each dancer. It will be combined with the generated output from VAE for single dancer and passed to transformer decoder, and then generate the motion in the next time step.
+The model includes 3 VAEs, separately for dancer 1, dancer 2, and duet. Each VAE contains encoder and decoder, and encoder contains self-attention layer and LSTM layer. VAE for duet will receive original data of dancer 1 and dancer 2, and calculate the distance between two dancers to measure proximity. Then, it will generate one sequence representing interrelation for each dancer. It will be combined with the generated output from VAE for single dancer and passed to transformer decoder, and then generate the motion in the next time step.
 
 For more architectural details, visit our [model documentation](model/README.md).
 
