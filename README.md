@@ -1,6 +1,8 @@
 # ChoreoAI
 
-![alt text](ChoreoAI_Zixuan_Wang/assets/image-1.png)
+<div align="center">
+    <img src="ChoreoAI_Zixuan_Wang/assets/logo.png" width=90% />
+</div>
 
 ## Background
 While the fields of technology and dance have historically not often intersected, recent years have seen the advent of AI-generated choreography using models trained on motion capture of a single dancer. This project will expand the state-of-the-art in this intersectional field by exploring duets featuring pairs of dancers, enabling choreography that features authentic interactions between humans & AI models.
