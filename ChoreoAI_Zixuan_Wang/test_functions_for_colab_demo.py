@@ -457,30 +457,46 @@ def create_test_dataset(dataset_dir):
     return test_dataset
 
 
-def generate_dancer_data(test_dataset, test_set_idx, seq_len, net: DancerTransformer, device, generate_d1=True):
+def generate_dancer_data(test_dataset, test_set_idx, seq_len, net: DancerTransformer, device, generated_seq_len=64, generate_d1=True):
     test_dict_data = test_dataset[test_set_idx]
-    test_dict_data_next_timestamap = test_dataset[test_set_idx + seq_len]
     dancer1_data = test_dict_data['dancer1'].to(device)
     dancer2_data = test_dict_data['dancer2'].to(device)
 
-    dancer1_data_next_timestamp = test_dict_data_next_timestamap['dancer1'].to(device)
-    dancer2_data_next_timestamp = test_dict_data_next_timestamap['dancer2'].to(device)
+    quotient = generated_seq_len // seq_len
+    remainder = generated_seq_len % seq_len
 
-    dancer1_data_all = torch.cat((dancer1_data, dancer1_data_next_timestamp), dim=0)
-    dancer2_data_all = torch.cat((dancer2_data, dancer2_data_next_timestamp), dim=0)
+    dancer1_data_next_timestamp = []
+    dancer2_data_next_timestamp = []
+
+    new_idx = test_set_idx
+
+    for i in range(quotient + 1):
+        cur_test_data = test_dataset[new_idx]
+        dancer1_data_next_timestamp.append(cur_test_data['dancer1'])
+        dancer2_data_next_timestamp.append(cur_test_data['dancer2'])
+
+        new_idx += seq_len
+    
+    if remainder > 0:
+        cur_test_data = test_dataset[new_idx]
+        dancer1_data_next_timestamp.append(cur_test_data['dancer1'][:remainder])
+        dancer2_data_next_timestamp.append(cur_test_data['dancer2'][:remainder])
+    
+    dancer1_data_all = torch.cat(dancer1_data_next_timestamp, dim=0)
+    dancer2_data_all = torch.cat(dancer2_data_next_timestamp, dim=0)
+    dancer1_data_all = dancer1_data_all.to(device)
+    dancer2_data_all = dancer2_data_all.to(device)
 
     d1_all = dancer1_data_all[None, :].clone().detach().float()
     d2_all = dancer2_data_all[None, :].clone().detach().float()
 
-    # 64 frames
     d1 = dancer1_data[None, :].clone().detach().float()
     d2 = dancer2_data[None, :].clone().detach().float()
 
     with torch.no_grad():
         vae_1, vae_2, vae_duet, transformer_decoder_1, transformer_decoder_2 = net.vae_1, net.vae_2, net.vae_duet, net.transformer_decoder_1, net.transformer_decoder_2
 
-        for i in range(64):
-            # [1, 64, 29, 3]
+        for i in range(generated_seq_len):
             if generate_d1:
                 combined = torch.stack((d1[:, i: i + seq_len, :, :], d2_all[:, i: i + seq_len, :, :]), dim=-1)
             else:
@@ -520,16 +536,13 @@ def generate_dancer_data(test_dataset, test_set_idx, seq_len, net: DancerTransfo
     seq2_original[..., 2] = -seq2_original[..., 2]
     seq2_original = seq2_original.cpu().numpy()
 
-    seq1_next_ts = None
-    seq2_next_ts = None
-
     if generate_d1:
         seq1_next_ts = d1[0][..., [2, 0, 1]]
         seq1_next_ts[..., 2] = -seq1_next_ts[..., 2]
         seq1_next_ts = seq1_next_ts.cpu().numpy()
+        return seq2_original[seq_len - 5:], seq1_next_ts[seq_len - 5:]
     else:
         seq2_next_ts = d2[0][..., [2, 0, 1]]
         seq2_next_ts[..., 2] = -seq2_next_ts[..., 2]
         seq2_next_ts = seq2_next_ts.cpu().numpy()
-    
-    return seq1_original, seq2_original, seq1_next_ts, seq2_next_ts
+        return seq1_original[seq_len - 5:], seq2_next_ts[seq_len - 5:]
