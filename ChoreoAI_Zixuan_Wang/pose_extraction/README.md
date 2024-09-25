@@ -1,4 +1,4 @@
-## Data preprocessing
+## Data Preprocessing for Duets
 High-quality training data is essential for an AI model. In order to extract 3D joints (point cloud) data from videos provided by Ilya, we have tested two open-source tools for pose estimation, [OpenPose](https://github.com/Devashi-Choudhary/AI-Dance-based-on-Human-Pose-Estimation) and [AlphaPose](https://github.com/MVIG-SJTU/AlphaPose). 
 
 We had no luck in managing configuration of OpenPose, so we switched to AlphaPose, which provided many different kinds of models for both 2D and 3D inference. 
@@ -10,7 +10,7 @@ I would like to thank Mariel for providing the computing resources on Perlmutter
 
 #### 2D
 
-I have tested with [this model](https://github.com/MVIG-SJTU/AlphaPose/blob/master/configs/halpe_136/resnet/256x192_res50_lr1e-3_2x-dcn-regression.yaml) for 2D keypoints inference. There are many different models trained on different datasets, so feel free to explore the model zoo to find the one that meets your need!
+I have tested with [this model](https://github.com/MVIG-SJTU/AlphaPose/blob/master/configs/halpe_136/resnet/256x192_res50_lr1e-3_2x-dcn-regression.yaml) for 2D keypoints inference. There are many different models trained on different datasets, so feel free to explore the model zoo to find the one that meets your need.
 
 ![image](imgs/halpe136_2d.png)
 
@@ -30,7 +30,7 @@ Therefore, in order to keep the interaction between the dancers, we remove [this
     <img src="imgs/2.gif" width=50% />
 </div> 
 
-Please check out `preprocessing.ipynb` for detailed processing of raw data (many thanks to Luis!), which addresses:
+Please check out `preprocessing.ipynb` for detailed processing of raw data, which addresses:
 - missing frames
 - frames with only one person / more than two persons
 - index matching
