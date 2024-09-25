@@ -106,7 +106,7 @@ def main():
             f'no_input_prob: {no_input_prob}\n'
             f'velocity_loss_weight: {velocity_loss_weight}\n'
             f'kl_loss_weight: {kl_loss_weight}\n'
-            f'mse_loss_weight: {mse_loss_weight}'
+            f'mse_loss_weight: {mse_loss_weight}\n'
             f'frames: {frames}'
         )
 
