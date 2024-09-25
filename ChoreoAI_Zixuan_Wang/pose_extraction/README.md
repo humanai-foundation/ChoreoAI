@@ -30,7 +30,7 @@ Therefore, in order to keep the interaction between the dancers, we remove [this
     <img src="imgs/2.gif" width=50% />
 </div> 
 
-Please check out `preprocessing.ipynb` for detailed processing of raw data, which addresses:
+Please check out [this jupyter notebook](preprocessing.ipynb) for detailed processing of raw data, which addresses:
 - missing frames
 - frames with only one person / more than two persons
 - index matching
