@@ -68,6 +68,8 @@ The following visualizations showcase the output of our model (blue) in comparis
     <img src="gsoc_vis/pose_extraction_ilya_hannah_dyads_generate_d1_True_1154.gif" width=33% />
 </div> 
 
-<img src="gsoc_vis/pose_extraction_hannah_cassie_generate_d1_True_417.gif" width=33% />
-<img src="gsoc_vis/pose_extraction_hannah_cassie_generate_d1_True_837.gif" width=33% />
-<img src="gsoc_vis/pose_extraction_img_9085_generate_d1_True_378.gif" width=33% />
+<div align="center">
+    <img src="gsoc_vis/pose_extraction_hannah_cassie_generate_d1_True_417.gif" width=33% />
+    <img src="gsoc_vis/pose_extraction_hannah_cassie_generate_d1_True_837.gif" width=33% />
+    <img src="gsoc_vis/pose_extraction_img_9085_generate_d1_True_378.gif" width=33% />
+</div>
