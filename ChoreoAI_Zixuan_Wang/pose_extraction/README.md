@@ -4,7 +4,7 @@ High-quality training data is essential for an AI model. In order to extract 3D 
 We had no luck in managing configuration of OpenPose, so we switched to AlphaPose, which provided many different kinds of models for both 2D and 3D inference. 
 
 ### AlphaPose Installation
-I would like to thank Mariel for providing the computing resources on Perlmutter. The installation document of AlphaPose on Perlmutter can be found [here](INSTALL.md). I have to admit that it focuses on a specific server, but I believe that it can be applied to any Linux server with CUDA driver version >= 12.0.
+I would like to thank Mariel for providing the computing resources on Perlmutter. The installation document of AlphaPose on Perlmutter can be found [in this documentation](INSTALL.md). I have to admit that it focuses on a specific server, but I believe that it can be applied to any Linux server with CUDA driver version >= 12.0.
 
 ### Model Inference
 
@@ -39,8 +39,5 @@ Please check out `preprocessing.ipynb` for detailed processing of raw data (many
 Processed data:
 
 <div align="center">
-    <img src="imgs/3.gif" width=50% />
+    <img src="imgs/dataset.gif" width=50% />
 </div> 
-
-## Raw data link
-This [link](https://drive.google.com/drive/folders/1QkkAjVaKEuPBDzz7mN1BVYxUYZaYdtJF?usp=sharing) provides the raw json data extracted from AlphaPose.
