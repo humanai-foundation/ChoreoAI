@@ -152,9 +152,9 @@ def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zco
     ax = plt.axes(projection='3d')
     
     # The following lines eliminate background lines/axes:
-    ax.axis('on')
-    ax.xaxis.set_visible(True)
-    ax.yaxis.set_visible(True)
+    ax.axis('off')
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
     # ax.set_frame_on(True)
     
     # set figure background opacity (alpha) to 0:
@@ -179,7 +179,7 @@ def animate_stick(seq, ghost=None, ghost_shift=0, threshold=0, figsize=None, zco
         ax.set_xlim(*ax_lims)
         ax.set_ylim(*ax_lims)
         ax.set_zlim(*ax_lims)
-    
+
     plt.close(fig)
     xline, colors = get_line_segments(seq, zcolor, cm)
     lines = put_lines(ax, xline[0], color=colors, lw=lw, alpha=0.9, cloud=cloud, cloud_alpha=cloud_alpha, threshold=threshold, skeleton=skeleton, skeleton_alpha=skeleton_alpha)
