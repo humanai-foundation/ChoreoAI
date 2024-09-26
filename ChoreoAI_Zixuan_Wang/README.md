@@ -8,7 +8,7 @@ Hi guys! Welcome to my repository for [Google Summer of Code 2024 - AI-Generated
 
 For a hands-on experience, dive into my [Google Colab Notebook](https://colab.research.google.com/drive/1_UhiZ3LczwTCqnzfObKShWeaYSLlvwzW?usp=sharing) which provides an interactive demonstration of the network.
 
-I also would like to express my heartfelt thank you to my incredible mentors [Mariel Pettee](https://marielpettee.com/) and [Ilya Vidrin](https://www.ilyavidrin.com/) for their invaluable guidance, and my collegue, [Luis Zerkowski](https://github.com/Luizerko), for his collaborative efforts and insights from his [project](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Duet_ChorAIgraphy_Luis_Zerkowski).
+I also would like to express my heartfelt thank you to my incredible mentors [Mariel Pettee](https://marielpettee.com/) and [Ilya Vidrin](https://www.ilyavidrin.com/) for their invaluable guidance, and my colleague, [Luis Zerkowski](https://github.com/Luizerko), for his collaborative efforts and insights from his [project](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Duet_ChorAIgraphy_Luis_Zerkowski).
 
 ## Goals
 ### Problem Addressed
