@@ -15,7 +15,7 @@ I also would like to express my heartfelt thank you to my incredible mentors [Ma
 This project aims at developing AI-generated choreography for duets. It outlines a novel approach leveraging Transformer and Variational Autoencoder to analyze and generate dance movements, focusing on creating authentic dance material that reflect the intricate dynamics between dancers.
 
 ### Solution Approach 
-The project uses **probability-based Transformer and Variational Autoencoder** to generate dancing data. 
+The project uses **Probability-and-Attention-based Variational Autoencoder** to generate dancing data. 
 
 The comprehensive solution plan involves:
 - Understand key relationships between parts of the body of each dancer through a dedicated VAE containing self-attention layers and LSTM layers
