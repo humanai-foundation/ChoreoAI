@@ -10,7 +10,7 @@ We aim to utilize both models to generate sequential dancing data by taking adva
 The network consists of three VAEs designated as VAE 1, VAE 2, and VAE 3. Each VAE processes different aspects of dance movement sequences, with VAE 1 and VAE 2 handling individual sequences and VAE 3 focusing on the absolute distances between dancers, capturing their spatial interactions.
 ![](../assets/network_detailed.png)
 
-## Input and Output
+### Input and Output
 - **Input**: Sequences for dancer 1 and dancer 2, with shape `[seq_length, num_joints, dim]`, the time window for this sequence is `[t, t + seq_length]`.
 - **Output**: Predicted sequence in the next time step with same shape as input `[seq_length, num_joints, dim]`, and the time window is `[t + 1, t + 1 + seq_length]`.
 
