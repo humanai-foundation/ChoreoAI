@@ -6,23 +6,35 @@ from copy import deepcopy
 from model.transformer import DancerTransformer
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 from loss.reconstruction_loss import ReconstructionLoss
+from utils.misc import get_time_str
 
 logger = logging.getLogger('ai_choreo')
 
 
 class Pipeline:
-    def __init__(self):
+    def __init__(self, linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob, velocity_loss_weight, kl_loss_weight, mse_loss_weight=0.5, frames=1, epochs=100):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.network = DancerTransformer(64, 8, 32, 32, 64).to(self.device)
+        self.linear_num_features = linear_num_features
+        self.n_head = n_head
+        self.latent_dim = latent_dim
+        self.n_units = n_units
+        self.seq_len = seq_len
+        self.no_input_prob = no_input_prob
+        self.velocity_loss_weight = velocity_loss_weight
+        self.kl_loss_weight = kl_loss_weight
+        self.mse_loss_weight = mse_loss_weight
+        self.frames = frames
+        self.epochs = epochs
+        self.network = DancerTransformer(linear_num_features, n_head, latent_dim, n_units, seq_len, no_input_prob).to(self.device)
         self.loss = 0
-        self.criterion = ReconstructionLoss()
+        self.criterion = ReconstructionLoss(self.velocity_loss_weight, self.kl_loss_weight, self.mse_loss_weight)
 
-        self.init_training_settings()
+        self.init_training_settings(epochs)
 
-    def init_training_settings(self):
+    def init_training_settings(self, epochs):
         self.network.train()
         self.setup_optimizers()
-        self.setup_schedulers()
+        self.setup_schedulers(epochs)
 
     def setup_optimizers(self):
         optim_params = []
@@ -32,8 +44,8 @@ class Pipeline:
 
         self.optimizer = torch.optim.Adam(optim_params)
 
-    def setup_schedulers(self):
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=[10, 20, 30, 40, 50, 60, 70, 80, 90])
+    def setup_schedulers(self, epochs):
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, epochs)
 
     def feed_data(self, data):
         self.dancer1_data = torch.tensor(data['dancer1'], dtype=torch.float32).to(self.device)
@@ -41,14 +53,14 @@ class Pipeline:
         self.dancer1_next_timestamp = torch.tensor(data['dancer1_next_timestamp'], dtype=torch.float32).to(self.device)
         self.dancer2_next_timestamp = torch.tensor(data['dancer2_next_timestamp'], dtype=torch.float32).to(self.device)
 
-    def compute_loss(self, pred_data_1, pred_data_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet):
-        return self.criterion(pred_data_1, pred_data_2, self.dancer1_next_timestamp, self.dancer2_next_timestamp, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+    def compute_loss(self, pred_data_1, pred_data_2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2):
+        return self.criterion(pred_data_1, pred_data_2, self.dancer1_next_timestamp, self.dancer2_next_timestamp, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2, self.dancer1_data, self.dancer2_data, self.frames)
 
     def optimize_parameters(self):
         self.network.zero_grad()
-        pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet = self.network(self.dancer1_data, self.dancer2_data)
+        pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2 = self.network(self.dancer1_data, self.dancer2_data)
 
-        self.loss = self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+        self.loss = self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2)
 
         self.loss.backward()
         self.optimizer.step()
@@ -74,7 +86,7 @@ class Pipeline:
         self.scheduler.step()
 
     def save_network(self, param_key='params'):
-        save_filename = "best_model.pth"
+        save_filename = "best_model" + "_fea_" + str(self.linear_num_features) + "_head_" + str(self.n_head) + "_latent_" + str(self.latent_dim) + "_units_" + str(self.n_units) + "_seq_len_" + str(self.seq_len) + "_prob_" + str(self.no_input_prob) + "_velo_" + str(self.velocity_loss_weight) + "_kl_" + str(self.kl_loss_weight) + "_mse_" + str(self.mse_loss_weight) + "_frames_" + str(self.frames) + ".pth"
         save_path = os.path.join("result", save_filename)
 
         param_key = param_key if isinstance(param_key, list) else [param_key]
@@ -100,8 +112,8 @@ class Pipeline:
         with torch.no_grad():
             for test_data in test_loader:
                 self.feed_data(test_data)
-                pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet = self.network(self.dancer1_data, self.dancer2_data)
-                cur_loss += self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet)
+                pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2 = self.network(self.dancer1_data, self.dancer2_data, is_inference=True)
+                cur_loss += self.compute_loss(pred_data1, pred_data2, mean_1, log_var_1, mean_2, log_var_2, mean_duet, log_var_duet, is_simplified_model, out_1, out_2)
 
             cur_loss /= len(test_loader)
         self.network.train()
