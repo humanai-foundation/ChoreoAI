@@ -22,3 +22,21 @@ While the fields of technology and dance have historically not often intersected
 |-----------------|-----------------|-----------------|-----------------|
 | Luis Zerkowski  | Graph Neural Network  | [Repo Link](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Duet_ChorAIgraphy_Luis_Zerkowski) | [Blog Post](https://medium.com/@luisvz)
 | Zixuan Wang  | Transformer and VAE  | [Repo Link](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Zixuan_Wang)  | [Blog Post](https://wang-zixuan.github.io/posts/2024/gsoc_2024)
+
+
+## Environment Setup
+
+This repository contains Jupyter notebooks for choreography analysis
+and machine learning research.
+
+### Prerequisites
+- Python 3.8+
+- pip
+- Jupyter Notebook or Jupyter Lab
+
+### Setup Instructions
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/humanai-foundation/ChoreoAI.git
+   cd ChoreoAI
