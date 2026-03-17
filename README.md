@@ -19,27 +19,27 @@ While the fields of technology and dance have historically not often intersected
 
 ## Environment Setup
 To ensure reproducibility of the choreography analysis and machine learning experiments, please follow these steps to set up your local environment.
-# Prerequisites
+### Prerequisites
 - Python 3.10 is recommended.
 Virtual Environment: It is highly recommended to use venv or conda to manage dependencies.
-# Installation
-# 1.Clone the repository
+### Installation
+#### 1.Clone the repository
 - git clone https://github.com/humanai-foundation/ChoreoAI.git
 - cd ChoreoAI
 
-# 2.Create a virtual environment
+### 2.Create a virtual environment
 - python -m venv venv
 
-# 3.Activate the environment
+### 3.Activate the environment
 - On macOS/Linux:
 source venv/bin/activate
 - On Windows:
 .\venv\Scripts\activate
 
-# 4.Upgrade pip and install dependencies
+### 4.Upgrade pip and install dependencies
 - pip install --upgrade pip
 - pip install -r requirements.txt
-# Special note on PyTorch & Hardware
+### Special note on PyTorch & Hardware
 - The requirements.txt file includes torch and torch-geometric. Depending on your hardware (CPU vs. NVIDIA GPU), you may need to install a specific version of PyTorch. If the default installation does not detect your GPU, please refer to the official PyTorch guide.
 
 ## Projects
