@@ -17,6 +17,31 @@ While the fields of technology and dance have historically not often intersected
 - If time permits: Learn key relationships between parts of the body of each dancer that are integral to the dynamics of the duet
 - We will collaborate with the original dancers to use the model outputs to inspire new performance material
 
+## Environment Setup
+To ensure reproducibility of the choreography analysis and machine learning experiments, please follow these steps to set up your local environment.
+-Prerequisites
+Python 3.10 is recommended.
+Virtual Environment: It is highly recommended to use venv or conda to manage dependencies.
+-Installation
+# Clone the repository
+git clone https://github.com/humanai-foundation/ChoreoAI.git
+cd ChoreoAI
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+.\venv\Scripts\activate
+
+# Upgrade pip and install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+-Special note on PyTorch & Hardware
+The requirements.txt file includes torch and torch-geometric. Depending on your hardware (CPU vs. NVIDIA GPU), you may need to install a specific version of PyTorch. If the default installation does not detect your GPU, please refer to the official PyTorch guide.
+
 ## Projects
 | Contributor | Approach | Repository Link | Blog Post |
 |-----------------|-----------------|-----------------|-----------------|
