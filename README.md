@@ -22,3 +22,28 @@ While the fields of technology and dance have historically not often intersected
 |-----------------|-----------------|-----------------|-----------------|
 | Luis Zerkowski  | Graph Neural Network  | [Repo Link](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Duet_ChorAIgraphy_Luis_Zerkowski) | [Blog Post](https://medium.com/@luisvz)
 | Zixuan Wang  | Transformer and VAE  | [Repo Link](https://github.com/humanai-foundation/ChoreoAI/tree/main/ChoreoAI_Zixuan_Wang)  | [Blog Post](https://wang-zixuan.github.io/posts/2024/gsoc_2024)
+
+## Setup/Installation
+- Fork the repository
+- Clone the repository
+```bash
+git clone https://github.com/YourUsername/ChoreoAI
+cd ChoreoAI
+```
+## Create virtual Environment
+- Windows:
+python -m venv venv
+venv\Scripts\activate
+- Linux:
+python3 -m venv venv
+source venv/bin/activate
+
+## Install Dependencies
+- pip install -r requirements.txt
+
+## Contributing Guidelines
+1. Fork the repository.
+2. Create a branch: `git checkout -b feature/your_feature_name`.
+3. Make your changes and commit: `git commit -m 'Add new feature'`.
+4. Push to the branch: `git push origin feature/your_feature_name`.
+5. Open a Pull Request.
